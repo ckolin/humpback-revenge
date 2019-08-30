@@ -7,6 +7,8 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
 const options = {
+    volume: 0.5,
+    resolution: 0.3,
     worldSize: {x: 300, y: 200}
 };
 
@@ -18,27 +20,28 @@ let state = {
 
 const init = () => {
     dbg("init");
+    Sfx.init();
     resize();
     update();
 };
 
 const resize = () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth * options.resolution;
+    canvas.height = window.innerHeight * options.resolution;
     ctx.imageSmoothingEnabled = false;
     state.canvasScale = canvas.width / options.worldSize.x;
 };
 
 const whale = {
     img: document.getElementById("whale-img"),
-    size: {x: 60, y: 40},
+    size: {x: 30, y: 20},
     pos: {x: 40, y: 100},
     forward: {x: 1, y: 1}
 };
 
 const small_boat = {
     img: document.getElementById("small-boat-img"),
-    size: {x: 60, y: 40},
+    size: {x: 30, y: 20},
     pos: {x: 100, y: 30},
     forward: {x: 1, y: 0}
 };
@@ -82,4 +85,4 @@ const draw = (thing) => {
 
 window.addEventListener("load", () => init());
 window.addEventListener("resize", () => resize());
-canvas.addEventListener("mousemove", (e) => state.target = Vec.scale({x: e.layerX, y: e.layerY}, 1 / state.canvasScale));
+canvas.addEventListener("mousemove", (e) => state.target = Vec.scale({x: e.clientX, y: e.clientY}, options.worldSize.x / window.innerWidth));
