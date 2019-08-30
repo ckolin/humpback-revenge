@@ -12,12 +12,14 @@ const options = {
 
 let state = {
     canvasScale: 1,
+    lastUpdate: null,
+    target: null
 };
 
 const init = () => {
     dbg("init");
     resize();
-    draw();
+    update();
 };
 
 const resize = () => {
@@ -42,33 +44,42 @@ const small_boat = {
 };
 
 const things = [
-	small_boat,
-	whale
+    small_boat,
+    whale
 ];
 
-const draw = () => {
+const update = () => {
+    const delta = state.lastUpdate ? Date.now() - state.lastUpdate : 0;
+    state.lastUpdate = Date.now();
+
+    updateWhale(delta);
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    things.forEach(t => drawThing(t));
-    requestAnimationFrame(draw);
+    things.forEach(t => draw(t));
+
+    requestAnimationFrame(update);
 };
 
-const drawThing = (thing) => {
+const updateWhale = (delta) => {
+    if (!state.target) state.target = whale.pos;
+    whale.forward = Vec.normalize(Vec.subtract(state.target, whale.pos));
+    if (Vec.distance2(state.target, whale.pos) > 10)
+        whale.pos = Vec.add(whale.pos, Vec.scale(whale.forward, delta * 0.03));
+};
+
+const draw = (thing) => {
     ctx.save();
-	ctx.scale(state.canvasScale, state.canvasScale);
+    ctx.scale(state.canvasScale, state.canvasScale);
     ctx.translate(thing.pos.x, thing.pos.y);
     ctx.rotate(Vec.angle(thing.forward));
     ctx.translate(-thing.size.x / 2, -thing.size.y / 2);
     const scaleX = thing.forward.x < 0 ? -1 : 1;
-	ctx.scale(scaleX, 1);
+    ctx.scale(scaleX, 1);
     ctx.drawImage(thing.img, 0, 0, thing.size.x * scaleX, thing.size.y);
     if (dbg()) ctx.strokeRect(0, 0, thing.size.x * scaleX, thing.size.y);
     ctx.restore();
 };
 
-const target = (pos) => {
-    whale.forward = Vec.subtract(pos, whale.pos);
-};
-
 window.addEventListener("load", () => init());
 window.addEventListener("resize", () => resize());
-canvas.addEventListener("mousemove", (e) => target(Vec.scale({x: e.layerX, y: e.layerY}, 1 / state.canvasScale)));
+canvas.addEventListener("mousemove", (e) => state.target = Vec.scale({x: e.layerX, y: e.layerY}, 1 / state.canvasScale));
