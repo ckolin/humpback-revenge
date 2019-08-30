@@ -1,0 +1,10 @@
+body {
+	margin: 0;
+	color: black;
+	background-color: #35c;
+	overflow: hidden;
+}
+
+#imgs {
+	display: none;
+}
