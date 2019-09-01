@@ -7,7 +7,7 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
 const options = {
-    volume: 0.5,
+    volume: 0.2,
     resolution: 0.3,
     worldSize: {x: 300, y: 200}
 };
@@ -15,12 +15,14 @@ const options = {
 let state = {
     canvasScale: 1,
     lastUpdate: null,
-    target: null
+    target: null,
+    sfx: null,
 };
 
 const init = () => {
     dbg("init");
-    Sfx.init();
+    state.sfx = new Sfx();
+    if (!dbg()) state.sfx.startMusic();
     resize();
     update();
 };
@@ -85,4 +87,7 @@ const draw = (thing) => {
 
 window.addEventListener("load", () => init());
 window.addEventListener("resize", () => resize());
-canvas.addEventListener("mousemove", (e) => state.target = Vec.scale({x: e.clientX, y: e.clientY}, options.worldSize.x / window.innerWidth));
+canvas.addEventListener("mousemove", (e) => state.target = Vec.scale({
+    x: e.clientX,
+    y: e.clientY
+}, options.worldSize.x / window.innerWidth));
