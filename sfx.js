@@ -10,10 +10,12 @@ class Sfx {
     startMusic() {
         const melody = [14, 14, , 14, , 16, , 21, , 19, 19, , 19, , , 19, 19, , 19, , 16, , 16, , 19, 19, , 19, , , 19, , 19, , 21, , 21, , 19, , 19, 19, , 19, , , 19, 19, , 19, , 16, , 16, , 19, 19, , 19, , , 19, , 19, , 24, , 24, , 21];
         const tempo = 0.12;
-        this.musicInterval = setInterval(() => Sfx.play(melody, "sawtooth", 200, tempo), (melody.length + 1) * tempo * 1000);
+        const loop = () => Sfx.play(melody, "sawtooth", 200, tempo);
+        this.musicInterval = setInterval(loop, (melody.length + 1) * tempo * 1000);
+        loop();
     }
 
-    endMusic() {
+    stopMusic() {
         clearInterval(this.musicInterval);
     }
 
