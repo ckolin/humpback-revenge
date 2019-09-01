@@ -80,8 +80,8 @@ const draw = (thing) => {
     ctx.translate(-thing.size.x / 2, -thing.size.y / 2);
     const scaleX = thing.forward.x < 0 ? -1 : 1;
     ctx.scale(scaleX, 1);
-    ctx.drawImage(thing.img, 0, 0, thing.size.x * scaleX, thing.size.y);
     if (dbg()) ctx.strokeRect(0, 0, thing.size.x * scaleX, thing.size.y);
+    ctx.drawImage(thing.img, 0, 0, thing.size.x * scaleX, thing.size.y);
     ctx.restore();
 };
 
