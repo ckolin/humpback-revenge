@@ -8,12 +8,12 @@ const ctx = canvas.getContext("2d");
 
 const options = {
     volume: 0.2,
-    resolution: 0.3,
-    worldSize: {x: 300, y: 200}
+    resolution: 0.5,
+    worldSize: {x: 200, y: 100}
 };
 
 let state = {
-    canvasScale: 1,
+    canvasScale: null,
     lastUpdate: null,
     target: null,
     sfx: null,
@@ -22,7 +22,7 @@ let state = {
 const init = () => {
     dbg("init");
     state.sfx = new Sfx();
-    if (!dbg()) state.sfx.startMusic();
+    //TODO: state.sfx.startMusic();
     resize();
     update();
 };
@@ -35,30 +35,15 @@ const resize = () => {
 };
 
 const boats = [
-    {
-        img: document.getElementById("small-boat-img"),
-        size: {x: 30, y: 20},
-        pos: {x: 100, y: 30},
-        forward: {x: 1, y: 0}
-    }, {
-        img: document.getElementById("small-boat-img"),
-        size: {x: 30, y: 20},
-        pos: {x: 180, y: 30},
-        forward: {x: 1, y: 0}
-    }
+    new Thing("small-boat-image", {x: 40, y: 30}),
+    new Thing("small-boat-image", {x: 100, y: 30}),
 ];
 
-const whale = {
-    img: document.getElementById("whale-img"),
-    size: {x: 30, y: 20},
-    pos: {x: 40, y: 100},
-    forward: {x: 1, y: 1}
-};
+const whale = new Thing("whale-image", {x: 40, y: 100});
 
 const update = () => {
     const delta = state.lastUpdate ? Date.now() - state.lastUpdate : 0;
     state.lastUpdate = Date.now();
-
     updateWhale(delta);
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -80,17 +65,16 @@ const draw = (thing) => {
     ctx.scale(state.canvasScale, state.canvasScale);
     ctx.translate(thing.pos.x, thing.pos.y);
     ctx.rotate(Vec.angle(thing.forward));
-    ctx.translate(-thing.size.x / 2, -thing.size.y / 2);
+    ctx.translate(-thing.img.naturalWidth / 2, -thing.img.naturalHeight / 2);
     const scaleX = thing.forward.x < 0 ? -1 : 1;
     ctx.scale(scaleX, 1);
-    if (dbg()) ctx.strokeRect(0, 0, thing.size.x * scaleX, thing.size.y);
-    ctx.drawImage(thing.img, 0, 0, thing.size.x * scaleX, thing.size.y);
+    if (dbg()) ctx.strokeRect(0, 0, thing.img.naturalWidth * scaleX, thing.img.naturalHeight);
+    ctx.drawImage(thing.img, 0, 0, thing.img.naturalWidth * scaleX, thing.img.naturalHeight);
     ctx.restore();
 };
 
 window.addEventListener("load", () => init());
 window.addEventListener("resize", () => resize());
-canvas.addEventListener("mousemove", (e) => state.target = Vec.scale({
-    x: e.clientX,
-    y: e.clientY
-}, options.worldSize.x / window.innerWidth));
+canvas.addEventListener("mousemove", (e) => {
+    state.target = Vec.scale({x: e.clientX, y: e.clientY}, options.worldSize.x / window.innerWidth);
+});
