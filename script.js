@@ -34,24 +34,26 @@ const resize = () => {
     state.canvasScale = canvas.width / options.worldSize.x;
 };
 
+const boats = [
+    {
+        img: document.getElementById("small-boat-img"),
+        size: {x: 30, y: 20},
+        pos: {x: 100, y: 30},
+        forward: {x: 1, y: 0}
+    }, {
+        img: document.getElementById("small-boat-img"),
+        size: {x: 30, y: 20},
+        pos: {x: 180, y: 30},
+        forward: {x: 1, y: 0}
+    }
+];
+
 const whale = {
     img: document.getElementById("whale-img"),
     size: {x: 30, y: 20},
     pos: {x: 40, y: 100},
     forward: {x: 1, y: 1}
 };
-
-const small_boat = {
-    img: document.getElementById("small-boat-img"),
-    size: {x: 30, y: 20},
-    pos: {x: 100, y: 30},
-    forward: {x: 1, y: 0}
-};
-
-const things = [
-    small_boat,
-    whale
-];
 
 const update = () => {
     const delta = state.lastUpdate ? Date.now() - state.lastUpdate : 0;
@@ -60,6 +62,7 @@ const update = () => {
     updateWhale(delta);
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const things = [...boats, whale];
     things.forEach(t => draw(t));
 
     requestAnimationFrame(update);
