@@ -31,7 +31,7 @@ class Sfx {
             oscillator.start(time);
             oscillator.frequency.setValueAtTime(pitch * 1.06 ** (13 - tone), time);
             gain.gain.setValueAtTime(options.volume, time);
-            gain.gain.setTargetAtTime(0.0001, time + tempo - 0.02, 0.005);
+            gain.gain.setTargetAtTime(0.0001, time + 0.02, tempo);
             oscillator.stop(time + tempo - 0.01);
         });
     }
