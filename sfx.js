@@ -9,8 +9,8 @@ class Sfx {
 
     startMusic() {
         const melody = [14, 14, , 14, , 16, , 21, , 19, 19, , 19, , , 19, 19, , 19, , 16, , 16, , 19, 19, , 19, , , 19, , 19, , 21, , 21, , 19, , 19, 19, , 19, , , 19, 19, , 19, , 16, , 16, , 19, 19, , 19, , , 19, , 19, , 24, , 24, , 21];
-        const tempo = 0.12;
-        const loop = () => Sfx.play(melody, "sawtooth", 200, tempo);
+        const tempo = 0.2;
+        const loop = () => Sfx.play(melody, "sawtooth", 180, tempo);
         this.musicInterval = setInterval(loop, (melody.length + 1) * tempo * 1000);
         loop();
     }
@@ -33,7 +33,7 @@ class Sfx {
             oscillator.start(time);
             oscillator.frequency.setValueAtTime(pitch * 1.06 ** (13 - tone), time);
             gain.gain.setValueAtTime(options.volume, time);
-            gain.gain.setTargetAtTime(0.0001, time + 0.02, tempo);
+            gain.gain.setTargetAtTime(0, time + 0.01, tempo / 3);
             oscillator.stop(time + tempo - 0.01);
         });
     }
