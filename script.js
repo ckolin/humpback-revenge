@@ -23,11 +23,10 @@ const state = {
 };
 
 window.addEventListener("load", () => {
-    dbg("init");
-
     state.canvas = document.getElementById("canvas");
     state.ctx = state.canvas.getContext("2d");
     state.sfx = new Sfx();
+    state.sfx.init();
     //TODO: state.sfx.startMusic();
     state.ocean = new Ocean(options.worldSize, 80);
     window.addEventListener("resize", () => resize());
@@ -47,52 +46,44 @@ const resize = () => {
 };
 
 const boats = [
-    new Thing("small-boat-image", {x: 40, y: 15}),
-    new Thing("small-boat-image", {x: 100, y: 15}),
+    new Thing(new Sprite("small-boat-image"), {x: 40, y: 15}),
+    new Thing(new Sprite("small-boat-image"), {x: 100, y: 15}),
 ];
 
-const whale = new Thing("whale-image", {x: 20, y: 60});
+const whale = new Thing(new Sprite("whale-image"), {x: 20, y: 60});
 
-// TODO
-const test = {
-    img: document.getElementById("seaweed-image"),
-    pos: {x: 10, y: 82},
-    forward: {x: 1, y: 0},
-    draw: (ctx) => {
-        const width = 16;
-        const delay = 600;
-        const frames = 4;
-        const frame = Math.floor(Date.now() / delay) % frames;
-        ctx.translate(test.pos.x, test.pos.y);
-        ctx.rotate(Vec.angle(test.forward));
-        ctx.translate(-width / 2, -test.img.naturalHeight / 2);
-        const scaleX = test.forward.x < 0 ? -1 : 1;
-        ctx.scale(scaleX, 1);
-        ctx.strokeStyle = options.colors[0];
-        if (dbg()) ctx.strokeRect(0, 0, width * scaleX, test.img.naturalHeight);
-        ctx.drawImage(test.img, width * frame, 0, width, test.img.naturalHeight, 0, 0, width * scaleX, test.img.naturalHeight);
-    }
-};
+const seaweeds = [
+    new Thing(new Sprite("seaweed-image", 4), {x: 140, y: 82}),
+    new Thing(new Sprite("seaweed-image", 4), {x: 180, y: 82})
+];
 
 const text = new Text("Hello, World!", {x: 1, y: 1});
 
 const update = () => {
-    const delta = state.lastUpdate ? Date.now() - state.lastUpdate : 0;
-    state.lastUpdate = Date.now();
+    const time = Date.now();
+    const delta = state.lastUpdate ? time - state.lastUpdate : 0;
+    state.lastUpdate = time;
     updateWhale(delta);
     state.ocean.update();
 
     state.ctx.fillStyle = options.colors[4];
     state.ctx.fillRect(0, 0, state.canvas.width, state.canvas.height);
-    [state.ocean.background, ...boats, whale, test, state.ocean.foreground, text].forEach(t => drawScaled(t));
+    [
+        state.ocean.background,
+        ...boats,
+        whale,
+        ...seaweeds,
+        state.ocean.foreground,
+        text
+    ].forEach(thing => drawScaled(thing, time));
 
     requestAnimationFrame(update);
 };
 
-const drawScaled = (thing) => {
+const drawScaled = (thing, time) => {
     state.ctx.save();
     state.ctx.scale(state.canvasScale, state.canvasScale);
-    thing.draw(state.ctx);
+    thing.draw(state.ctx, time);
     state.ctx.restore();
 };
 
