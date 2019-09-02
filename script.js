@@ -53,8 +53,9 @@ const boats = [
 const whale = new Thing(new Sprite("whale-image"), {x: 20, y: 60});
 
 const seaweeds = [
-    new Thing(new Sprite("seaweed-image", 4), {x: 140, y: 82}),
-    new Thing(new Sprite("seaweed-image", 4), {x: 180, y: 82})
+    new Thing(new Sprite("seaweed-image", 4, 600, 0), {x: 140, y: 86}),
+    new Thing(new Sprite("seaweed-image", 4, 600, 2), {x: 160, y: 84}),
+    new Thing(new Sprite("seaweed-image", 4, 600, 1), {x: 180, y: 82})
 ];
 
 const text = new Text("Hello, World!", {x: 1, y: 1});
