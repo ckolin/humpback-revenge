@@ -5,7 +5,7 @@ const dbg = (obj) => {
 
 const options = {
     volume: 0.2,
-    resolution: dbg() ? 0.5 : 1,
+    maxScale: 6,
     worldSize: {x: 200, y: 100},
     colors: [
         "#1a1c2c", "#5d275d", "#b13e53", "#ef7d57", "#ffcd75", "#a7f070", "#38b764", "#257179",
@@ -19,7 +19,7 @@ const state = {
     canvasScale: null,
     lastUpdate: null,
     target: null,
-    sfx: null,
+    sfx: null
 };
 
 window.addEventListener("load", () => {
@@ -31,7 +31,7 @@ window.addEventListener("load", () => {
     state.ocean = new Ocean(options.worldSize, 80);
     window.addEventListener("resize", () => resize());
     state.canvas.addEventListener("mousemove", (e) => {
-        state.target = Vec.scale({x: e.clientX, y: e.clientY}, options.worldSize.x / window.innerWidth);
+        state.target = Vec.scale({x: e.layerX, y: e.layerY}, 1 / state.canvasScale);
     });
 
     resize();
@@ -39,10 +39,14 @@ window.addEventListener("load", () => {
 });
 
 const resize = () => {
-    state.canvas.width = window.innerWidth * options.resolution;
-    state.canvas.height = window.innerHeight * options.resolution;
+    state.canvasScale = Math.min(window.innerWidth / options.worldSize.x, window.innerHeight / options.worldSize.y);
+    state.canvasScale = Math.min(state.canvasScale, options.maxScale);
+    const canvasSize = Vec.scale(options.worldSize, state.canvasScale);
+    state.canvas.width = canvasSize.x;
+    state.canvas.height = canvasSize.y;
+    state.canvas.style.left = `${(window.innerWidth - canvasSize.x) / 2}px`;
+    state.canvas.style.top = `${(window.innerHeight - canvasSize.y) / 2}px`;
     state.ctx.imageSmoothingEnabled = false;
-    state.canvasScale = state.canvas.width / options.worldSize.x;
 };
 
 const whale = new Thing(new Sprite("whale"), {x: 20, y: 60});

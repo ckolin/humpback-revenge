@@ -1,14 +1,15 @@
 body {
-	margin: 0;
-	overflow: hidden;
+    margin: 0;
+    overflow: hidden;
+    background: black;
+    background: url("assets/pattern.png");
 }
 
 #images {
-	display: none;
+    display: none;
 }
 
 #canvas {
-	position: absolute;
-	width: 100vw;
-	height: 100vh;
+    position: absolute;
+    box-shadow: black 8px 8px;
 }
