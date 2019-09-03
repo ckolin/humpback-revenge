@@ -1,14 +1,14 @@
 class Sprite {
-    constructor(imageId, frames=1, delay=500, offset=0) {
+    constructor(imageId, frames = 1, delay = 500, offset = 0) {
         this.image = document.getElementById(imageId);
         this.frames = frames;
-        this.frameWidth = this.image.naturalWidth / frames;
+        this.frameWidth = Math.max(this.image.naturalWidth / frames, 1);
         this.delay = delay;
         this.offset = offset;
     }
 
     draw(ctx, time, scaleX) {
-        const frame = Math.floor(time/ this.delay + this.offset) % this.frames;
+        const frame = Math.floor(time / this.delay + this.offset) % this.frames;
         ctx.translate(-this.frameWidth / 2, -this.image.naturalHeight / 2);
         ctx.scale(scaleX, 1);
         ctx.strokeStyle = options.colors[0];
