@@ -45,17 +45,19 @@ const resize = () => {
     state.canvasScale = state.canvas.width / options.worldSize.x;
 };
 
+const whale = new Thing(new Sprite("whale"), {x: 20, y: 60});
+
 const boats = [
-    new Thing(new Sprite("small-boat-image"), {x: 40, y: 15}),
-    new Thing(new Sprite("small-boat-image"), {x: 100, y: 15}),
+    new Thing(new Sprite("small-boat"), {x: 40, y: 15}),
+    new Thing(new Sprite("small-boat"), {x: 100, y: 15}),
 ];
 
-const whale = new Thing(new Sprite("whale-image"), {x: 20, y: 60});
-
-const seaweeds = [
-    new Thing(new Sprite("seaweed-image", 4, 600, 0), {x: 140, y: 86}),
-    new Thing(new Sprite("seaweed-image", 4, 600, 2), {x: 160, y: 84}),
-    new Thing(new Sprite("seaweed-image", 4, 600, 1), {x: 180, y: 82})
+const environment = [
+    new Thing(new Sprite("stone"), {x: 68, y: 93}, {x: 0, y: 1}),
+    new Thing(new Sprite("stone"), {x: 60, y: 95}),
+    new Thing(new Sprite("seaweed", 4, 600, 0), {x: 140, y: 86}),
+    new Thing(new Sprite("seaweed", 4, 600, 2), {x: 160, y: 84}),
+    new Thing(new Sprite("seaweed", 4, 600, 1), {x: 180, y: 82})
 ];
 
 const text = new Text("Hello, World!", {x: 1, y: 1});
@@ -73,19 +75,17 @@ const update = () => {
         state.ocean.background,
         ...boats,
         whale,
-        ...seaweeds,
+        ...environment,
         state.ocean.foreground,
         text
-    ].forEach(thing => drawScaled(thing, time));
+    ].forEach((thing) => {
+        state.ctx.save();
+        state.ctx.scale(state.canvasScale, state.canvasScale);
+        thing.draw(state.ctx, time);
+        state.ctx.restore();
+    });
 
     requestAnimationFrame(update);
-};
-
-const drawScaled = (thing, time) => {
-    state.ctx.save();
-    state.ctx.scale(state.canvasScale, state.canvasScale);
-    thing.draw(state.ctx, time);
-    state.ctx.restore();
 };
 
 const updateWhale = (delta) => {
