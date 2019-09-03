@@ -3,9 +3,9 @@ class Ocean {
         this.size = size;
         this.seaLevel = seaLevel;
         this.sines = [
-            {a: 1, b: 0.09, c: 0.002},
-            {a: 1, b: 0.04, c: 0.003},
-            {a: 0.8, b: 0.3, c: 0.004}
+            {a: 1, b: 0.09, c: 0.001},
+            {a: 1, b: 0.04, c: 0.0015},
+            {a: 0.8, b: 0.3, c: 0.002}
         ];
 
         this.points = [];
