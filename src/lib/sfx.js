@@ -1,4 +1,8 @@
 class Sfx {
+    constructor() {
+        this.musicInterval = null;
+    }
+
     init() {
         Sfx.play([14, 14, 7, 7], "square", 400, 0.05);
     }

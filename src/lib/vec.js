@@ -30,12 +30,12 @@ class Vec {
         return Math.atan(vec.y / vec.x);
     }
 
-    static length(vec) {
-        return Math.sqrt(vec.x ** 2 + vec.y ** 2);
+    static length2(vec) {
+        return vec.x ** 2 + vec.y ** 2;
     }
 
     static normalize(vec) {
-        const length = Vec.length(vec);
+        const length = Math.sqrt(Vec.length2(vec));
         if (length === 0)
             return vec;
         return Vec.scale(vec, 1 / length);

@@ -29,6 +29,20 @@ window.addEventListener("load", () => {
     state.sfx.init();
     //TODO: state.sfx.startMusic();
     state.ocean = new Ocean(options.worldSize, 80);
+    state.whale = new Thing(new Sprite("whale"), {x: 20, y: 60});
+    state.boats = [
+        new Thing(new Sprite("small-boat"), {x: 40, y: 15}),
+        new Thing(new Sprite("small-boat"), {x: 100, y: 15}),
+    ];
+    state.environment = [
+        new Thing(new Sprite("stone"), {x: 68, y: 93}, {x: 0, y: 1}),
+        new Thing(new Sprite("stone"), {x: 60, y: 95}),
+        new Thing(new Sprite("seaweed", 4, 600, 0), {x: 140, y: 86}),
+        new Thing(new Sprite("seaweed", 4, 600, 2), {x: 160, y: 84}),
+        new Thing(new Sprite("seaweed", 4, 600, 1), {x: 180, y: 82})
+    ];
+    state.label = new Label("Hello, World!", {x: 1, y: 1});
+
     window.addEventListener("resize", () => resize());
     state.canvas.addEventListener("mousemove", (e) => {
         state.target = Vec.scale({x: e.layerX, y: e.layerY}, 1 / state.canvasScale);
@@ -49,23 +63,6 @@ const resize = () => {
     state.ctx.imageSmoothingEnabled = false;
 };
 
-const whale = new Thing(new Sprite("whale"), {x: 20, y: 60});
-
-const boats = [
-    new Thing(new Sprite("small-boat"), {x: 40, y: 15}),
-    new Thing(new Sprite("small-boat"), {x: 100, y: 15}),
-];
-
-const environment = [
-    new Thing(new Sprite("stone"), {x: 68, y: 93}, {x: 0, y: 1}),
-    new Thing(new Sprite("stone"), {x: 60, y: 95}),
-    new Thing(new Sprite("seaweed", 4, 600, 0), {x: 140, y: 86}),
-    new Thing(new Sprite("seaweed", 4, 600, 2), {x: 160, y: 84}),
-    new Thing(new Sprite("seaweed", 4, 600, 1), {x: 180, y: 82})
-];
-
-const text = new Text("Hello, World!", {x: 1, y: 1});
-
 const update = () => {
     const time = Date.now();
     const delta = state.lastUpdate ? time - state.lastUpdate : 0;
@@ -77,11 +74,11 @@ const update = () => {
     state.ctx.fillRect(0, 0, state.canvas.width, state.canvas.height);
     [
         state.ocean.background,
-        ...boats,
-        whale,
-        ...environment,
+        ...state.boats,
+        state.whale,
+        ...state.environment,
         state.ocean.foreground,
-        text
+        state.label
     ].forEach((thing) => {
         state.ctx.save();
         state.ctx.scale(state.canvasScale, state.canvasScale);
@@ -93,8 +90,8 @@ const update = () => {
 };
 
 const updateWhale = (delta) => {
-    if (!state.target) state.target = whale.position;
-    whale.forward = Vec.normalize(Vec.subtract(state.target, whale.position));
-    if (Vec.distance2(state.target, whale.position) > 10)
-        whale.position = Vec.add(whale.position, Vec.scale(whale.forward, delta * 0.02));
+    if (!state.target) state.target = state.whale.position;
+    state.whale.forward = Vec.normalize(Vec.subtract(state.target, state.whale.position));
+    if (Vec.distance2(state.target, state.whale.position) > 10)
+        state.whale.position = Vec.add(state.whale.position, Vec.scale(state.whale.forward, delta * 0.02));
 };

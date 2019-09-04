@@ -1,4 +1,4 @@
-class Text {
+class Label {
     constructor(value, position) {
         this.value = value;
         this.position = position;
