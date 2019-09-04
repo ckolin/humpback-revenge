@@ -2,7 +2,7 @@ body {
     margin: 0;
     overflow: hidden;
     background: black;
-    background: url("assets/pattern.png");
+    background: url("../assets/pattern.png");
 }
 
 #images {
