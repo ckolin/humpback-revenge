@@ -45,7 +45,10 @@ window.addEventListener("load", () => {
 
     window.addEventListener("resize", () => resize());
     state.canvas.addEventListener("mousemove", (e) => {
-        state.target = Vec.scale({x: e.layerX, y: e.layerY}, 1 / state.canvasScale);
+        state.target = Vec.scale({
+            x: e.pageX - state.canvas.offsetLeft,
+            y: e.pageY - state.canvas.offsetTop
+        }, 1 / state.canvasScale);
     });
 
     resize();
