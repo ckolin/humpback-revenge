@@ -5,7 +5,7 @@ const dbg = (obj) => {
 
 const options = {
     volume: 0.2,
-    maxScale: 6,
+    maxScale: 8,
     worldSize: {x: 200, y: 100},
     colors: [
         "#1a1c2c", "#5d275d", "#b13e53", "#ef7d57", "#ffcd75", "#a7f070", "#38b764", "#257179",
@@ -56,8 +56,10 @@ window.addEventListener("load", () => {
 });
 
 const resize = () => {
-    state.canvasScale = Math.min(window.innerWidth / options.worldSize.x, window.innerHeight / options.worldSize.y);
-    state.canvasScale = Math.min(state.canvasScale, options.maxScale);
+    state.canvasScale = Math.floor(Math.min(
+        Math.min(window.innerWidth / options.worldSize.x, window.innerHeight / options.worldSize.y),
+        options.maxScale)
+    );
     const canvasSize = Vec.scale(options.worldSize, state.canvasScale);
     state.canvas.width = canvasSize.x;
     state.canvas.height = canvasSize.y;
