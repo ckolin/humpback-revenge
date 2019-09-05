@@ -27,9 +27,9 @@ window.addEventListener("load", () => {
     state.ctx = state.canvas.getContext("2d");
     state.sfx = new Sfx();
     state.sfx.init();
-    //TODO: state.sfx.startMusic();
+    state.sfx.startMusic();
     state.ocean = new Ocean(options.worldSize, 80);
-    state.whale = new Thing(new Sprite("whale"), {x: 20, y: 60});
+    state.whale = new Whale();
     state.boats = [
         new Thing(new Sprite("small-boat"), {x: 40, y: 15}),
         new Thing(new Sprite("small-boat"), {x: 100, y: 15}),
@@ -72,7 +72,7 @@ const update = () => {
     const time = Date.now();
     const delta = state.lastUpdate ? time - state.lastUpdate : 0;
     state.lastUpdate = time;
-    updateWhale(delta);
+    state.whale.update(delta);
     state.ocean.update();
 
     state.ctx.fillStyle = options.colors[4];
@@ -94,9 +94,7 @@ const update = () => {
     requestAnimationFrame(update);
 };
 
-const updateWhale = (delta) => {
-    if (!state.target) state.target = state.whale.position;
-    state.whale.forward = Vec.normalize(Vec.subtract(state.target, state.whale.position));
-    if (Vec.distance2(state.target, state.whale.position) > 10)
-        state.whale.position = Vec.add(state.whale.position, Vec.scale(state.whale.forward, delta * 0.02));
+const gameOver = () => {
+    state.sfx.stopMusic();
+    state.sfx.gameOver();
 };
