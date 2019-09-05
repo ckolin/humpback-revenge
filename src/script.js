@@ -18,8 +18,11 @@ const state = {
     ctx: null,
     canvasScale: null,
     lastUpdate: null,
-    target: null,
-    sfx: null
+    target: null, // TODO: Replace with direction input
+    sfx: null,
+    input: {
+        boost: false
+    }
 };
 
 window.addEventListener("load", () => {
@@ -27,7 +30,9 @@ window.addEventListener("load", () => {
     state.ctx = state.canvas.getContext("2d");
     state.sfx = new Sfx();
     state.sfx.init();
-    state.sfx.startMusic();
+    if (!dbg()) state.sfx.startMusic();
+
+    // Game objects
     state.ocean = new Ocean(options.worldSize, 80);
     state.whale = new Whale();
     state.boats = [
@@ -43,13 +48,16 @@ window.addEventListener("load", () => {
     ];
     state.label = new Label("Hello, World!", {x: 1, y: 1});
 
+    // Event handlers
     window.addEventListener("resize", () => resize());
-    state.canvas.addEventListener("mousemove", (e) => {
+    window.addEventListener("mousemove", (e) => {
         state.target = Vec.scale({
             x: e.pageX - state.canvas.offsetLeft,
             y: e.pageY - state.canvas.offsetTop
         }, 1 / state.canvasScale);
     });
+    window.addEventListener("mousedown", () => state.input.boost = true);
+    window.addEventListener("mouseup", () => state.input.boost = false);
 
     resize();
     update();
