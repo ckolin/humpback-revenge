@@ -36,8 +36,8 @@ window.addEventListener("load", () => {
     state.ocean = new Ocean(options.worldSize, 80);
     state.whale = new Whale();
     state.boats = [
-        new Thing(new Sprite("small-boat"), {x: 40, y: 15}),
-        new Thing(new Sprite("small-boat"), {x: 100, y: 15}),
+        new Thing(new Sprite("boat"), {x: 40, y: 15}),
+        new Thing(new Sprite("boat"), {x: 100, y: 15}),
     ];
     state.environment = [
         new Thing(new Sprite("stone"), {x: 68, y: 93}, {x: 0, y: 1}),
@@ -46,7 +46,27 @@ window.addEventListener("load", () => {
         new Thing(new Sprite("seaweed", 4, 600, 2), {x: 160, y: 84}),
         new Thing(new Sprite("seaweed", 4, 600, 1), {x: 180, y: 82})
     ];
-    state.label = new Label("Hello, World!", {x: 1, y: 1});
+    state.overlay = [
+        new Label("Hello, World!", {x: 50, y: 1}),
+        { // TODO: Extract
+            draw: (ctx) => {
+                const width = 20;
+                ctx.fillStyle = options.colors[0];
+                ctx.fillRect(1, options.worldSize.y - 5, width + 2, 4);
+                ctx.fillStyle = options.colors[12];
+                ctx.fillRect(2, options.worldSize.y - 4, Math.floor((state.whale.boost / state.whale.maxBoost) * width), 2);
+            }
+        }, { // TODO: Extract
+            draw: (ctx) => {
+                const sprite = new Sprite("heart", 1, 0, 0, false);
+                ctx.translate(1, 1);
+                for (let i = 0; i < state.whale.lives; i++) {
+                    sprite.draw(ctx);
+                    ctx.translate(sprite.frameWidth + 1, 0);
+                }
+            }
+        }
+    ];
 
     // Event handlers
     window.addEventListener("resize", () => resize());
@@ -56,6 +76,7 @@ window.addEventListener("load", () => {
             y: e.pageY - state.canvas.offsetTop
         }, 1 / state.canvasScale);
     });
+    window.addEventListener("contextmenu", (e) => e.preventDefault());
     window.addEventListener("mousedown", () => state.input.boost = true);
     window.addEventListener("mouseup", () => state.input.boost = false);
 
@@ -66,8 +87,8 @@ window.addEventListener("load", () => {
 const resize = () => {
     state.canvasScale = Math.floor(Math.min(
         Math.min(window.innerWidth / options.worldSize.x, window.innerHeight / options.worldSize.y),
-        options.maxScale)
-    );
+        options.maxScale
+    ));
     const canvasSize = Vec.scale(options.worldSize, state.canvasScale);
     state.canvas.width = canvasSize.x;
     state.canvas.height = canvasSize.y;
@@ -80,9 +101,16 @@ const update = () => {
     const time = Date.now();
     const delta = state.lastUpdate ? time - state.lastUpdate : 0;
     state.lastUpdate = time;
-    state.whale.update(delta);
-    state.ocean.update();
 
+    // Update
+    [
+        state.ocean,
+        state.whale
+    ].forEach((thing) => {
+        thing.update(delta);
+    });
+
+    // Drawing
     state.ctx.fillStyle = options.colors[4];
     state.ctx.fillRect(0, 0, state.canvas.width, state.canvas.height);
     [
@@ -91,7 +119,7 @@ const update = () => {
         state.whale,
         ...state.environment,
         state.ocean.foreground,
-        state.label
+        ...state.overlay
     ].forEach((thing) => {
         state.ctx.save();
         state.ctx.scale(state.canvasScale, state.canvasScale);
