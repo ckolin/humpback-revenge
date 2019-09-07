@@ -1,5 +1,5 @@
 class Label {
-    constructor(value, position) {
+    constructor(value, position = {x: 0, y: 0}) {
         this.value = value;
         this.position = position;
 
