@@ -14,6 +14,7 @@ const options = {
 };
 
 const state = {
+    score: 0,
     canvas: null,
     ctx: null,
     canvasScale: null,
@@ -47,7 +48,7 @@ window.addEventListener("load", () => {
         new Thing(new Sprite("seaweed", 4, 600, 1), {x: 180, y: 82})
     ];
     state.overlay = [
-        new Label("Hello, World!", {x: 50, y: 1}),
+        new Label(() => `${state.score} PTS`, {x: 50, y: 1}),
         { // TODO: Extract
             draw: (ctx) => {
                 const width = 20;

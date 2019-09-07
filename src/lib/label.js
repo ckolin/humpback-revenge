@@ -1,6 +1,6 @@
 class Label {
-    constructor(value, position = {x: 0, y: 0}) {
-        this.value = value;
+    constructor(valueFn, position = {x: 0, y: 0}) {
+        this.valueFn = valueFn;
         this.position = position;
 
         this.font = document.getElementById("font");
@@ -12,7 +12,7 @@ class Label {
     draw(ctx) {
         ctx.translate(this.position.x, this.position.y);
         let x = 0;
-        for (let char of this.value.toUpperCase()) {
+        for (let char of this.valueFn().toUpperCase()) {
             const i = this.fontText.indexOf(char);
             if (i < 0) continue;
             const pos = this.fontPositions[i];
