@@ -37,8 +37,8 @@ window.addEventListener("load", () => {
     state.ocean = new Ocean(options.worldSize, 80);
     state.whale = new Whale();
     state.boats = [
-        new Thing(new Sprite("boat"), {x: 40, y: 15}),
-        new Thing(new Sprite("boat"), {x: 100, y: 15}),
+        new Boat({x: 40, y: 15}),
+        new Boat({x: 100, y: 15})
     ];
     state.environment = [
         new Thing(new Sprite("stone"), {x: 68, y: 93}, {x: 0, y: 1}),

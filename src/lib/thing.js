@@ -1,7 +1,7 @@
 class Thing {
-    constructor(sprite, pos, forward = {x: 1, y: 0}) {
+    constructor(sprite, position, forward = {x: 1, y: 0}) {
         this.sprite = sprite;
-        this.position = pos;
+        this.position = position;
         this.forward = forward;
     }
 

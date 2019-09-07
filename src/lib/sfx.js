@@ -7,6 +7,10 @@ class Sfx {
         Sfx.play([14, 14, 7, 7], "square", 400, 0.05);
     }
 
+    ouch() {
+        Sfx.play([1], "square", 20, 0.2);
+    }
+
     gameOver() {
         Sfx.play([14, 14, , 16, 16, , 18, 18, , , 21, 21, 21, 21, 21], "square", 200, 0.05);
     }

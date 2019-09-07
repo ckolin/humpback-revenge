@@ -12,6 +12,8 @@ class Whale {
         this.lives--;
         if (this.lives <= 0)
             gameOver();
+        else
+            state.sfx.ouch();
     }
 
     update(delta) {
