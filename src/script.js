@@ -40,6 +40,9 @@ window.addEventListener("load", () => {
         new Boat({x: 40, y: 15}),
         new Boat({x: 100, y: 15})
     ];
+    state.submarines = [
+        new Thing(new Sprite("submarine"), {x: 150, y: 60})
+    ];
     state.environment = [
         new Thing(new Sprite("stone"), {x: 68, y: 93}, {x: 0, y: 1}),
         new Thing(new Sprite("stone"), {x: 60, y: 95}),
@@ -117,6 +120,7 @@ const update = () => {
     [
         state.ocean.background,
         ...state.boats,
+        ...state.submarines,
         state.whale,
         ...state.environment,
         state.ocean.foreground,
