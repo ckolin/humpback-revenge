@@ -14,23 +14,23 @@ class Whale {
         if (this.lives <= 0)
             gameOver();
         else
-            state.sfx.ouch();
+            state.sfx.hurt();
     }
 
     update(delta) {
         const targetDistance = state.target ? Vec.distance2(state.target, this.thing.position) : 0;
+        const boostActivated = this.updateBoost(delta);
+        this.bubbleEmitter.update(delta);
+
         if (targetDistance > 15 || (this.thing.sprite === this.whaleSprite && targetDistance > 2)) {
             this.thing.forward = Vec.normalize(Vec.subtract(state.target, this.thing.position));
-            if (this.updateBoost(delta))
-                this.thing.forward = Vec.scale(this.thing.forward, 2);
-            this.thing.position = Vec.add(this.thing.position, Vec.scale(this.thing.forward, delta * 0.02));
+            const boostFactor = boostActivated ? 2 : 1;
+            this.thing.position = Vec.add(this.thing.position, Vec.scale(this.thing.forward, delta * 0.02 * boostFactor));
             this.thing.sprite = this.whaleSprite;
         } else {
             this.thing.forward = {x: 1, y: 0};
             this.thing.sprite = this.whaleFrontSprite;
         }
-
-        this.bubbleEmitter.update(delta);
     }
 
     updateBoost(delta) {
