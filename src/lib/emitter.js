@@ -16,6 +16,7 @@ class Emitter {
     }
 
     start(interval) {
+        // TODO: Remove setInterval
         this.emitInterval = setInterval(() => this.emitSingle(), interval);
     }
 

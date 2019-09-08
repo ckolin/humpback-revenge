@@ -15,11 +15,10 @@ const options = {
 
 const state = {
     score: 0,
-    canvas: null,
-    ctx: null,
-    canvasScale: null,
+    screen: null,
     lastUpdate: null,
     target: null, // TODO: Replace with direction input
+    camera: {x: 0, y: 0},
     sfx: null,
     input: {
         boost: false
@@ -27,8 +26,7 @@ const state = {
 };
 
 window.addEventListener("load", () => {
-    state.canvas = document.getElementById("canvas");
-    state.ctx = state.canvas.getContext("2d");
+    state.view = new View();
     state.sfx = new Sfx();
     state.sfx.init();
     if (!dbg()) state.sfx.startMusic();
@@ -53,53 +51,43 @@ window.addEventListener("load", () => {
     state.overlay = [
         new Label(() => `${state.score} PTS`, {x: 50, y: 1}),
         { // TODO: Extract
-            draw: (ctx) => {
-                const width = 20;
-                ctx.fillStyle = options.colors[0];
-                ctx.fillRect(1, options.worldSize.y - 5, width + 2, 4);
-                ctx.fillStyle = options.colors[12];
-                ctx.fillRect(2, options.worldSize.y - 4, Math.floor((state.whale.boost / state.whale.maxBoost) * width), 2);
+            render: (screen) => {
+                screen.callScaled((ctx) => {
+                    const width = 20;
+                    ctx.fillStyle = options.colors[0];
+                    ctx.fillRect(1, options.worldSize.y - 5, width + 2, 4);
+                    ctx.fillStyle = options.colors[12];
+                    ctx.fillRect(2, options.worldSize.y - 4, Math.floor((state.whale.boost / state.whale.maxBoost) * width), 2);
+                });
             }
         }, { // TODO: Extract
-            draw: (ctx) => {
-                const sprite = new Sprite("heart", 1, 0, 0, false);
-                ctx.translate(1, 1);
-                for (let i = 0; i < state.whale.lives; i++) {
-                    sprite.draw(ctx);
-                    ctx.translate(sprite.frameWidth + 1, 0);
-                }
+            render: (screen) => {
+                screen.callScaled((ctx) => {
+                    const sprite = new Sprite("heart", 1, 0, 0, false);
+                    ctx.translate(1, 1);
+                    for (let i = 0; i < state.whale.lives; i++) {
+                        sprite.draw(ctx);
+                        ctx.translate(sprite.frameWidth + 1, 0);
+                    }
+                });
             }
         }
     ];
 
     // Event handlers
-    window.addEventListener("resize", () => resize());
+    window.addEventListener("resize", () => state.view.resize());
     window.addEventListener("mousemove", (e) => {
         state.target = Vec.scale({
-            x: e.pageX - state.canvas.offsetLeft,
-            y: e.pageY - state.canvas.offsetTop
-        }, 1 / state.canvasScale);
+            x: e.pageX - state.view.canvas.offsetLeft,
+            y: e.pageY - state.view.canvas.offsetTop
+        }, 1 / state.view.canvasScale);
     });
     window.addEventListener("contextmenu", (e) => e.preventDefault());
     window.addEventListener("mousedown", () => state.input.boost = true);
     window.addEventListener("mouseup", () => state.input.boost = false);
 
-    resize();
     update();
 });
-
-const resize = () => {
-    state.canvasScale = Math.floor(Math.min(
-        Math.min(window.innerWidth / options.worldSize.x, window.innerHeight / options.worldSize.y),
-        options.maxScale
-    ));
-    const canvasSize = Vec.scale(options.worldSize, state.canvasScale);
-    state.canvas.width = canvasSize.x;
-    state.canvas.height = canvasSize.y;
-    state.canvas.style.left = `${(window.innerWidth - canvasSize.x) / 2}px`;
-    state.canvas.style.top = `${(window.innerHeight - canvasSize.y) / 2}px`;
-    state.ctx.imageSmoothingEnabled = false;
-};
 
 const update = () => {
     const time = Date.now();
@@ -114,9 +102,11 @@ const update = () => {
         thing.update(delta);
     });
 
-    // Drawing
-    state.ctx.fillStyle = options.colors[4];
-    state.ctx.fillRect(0, 0, state.canvas.width, state.canvas.height);
+    // Rendering
+    state.view.callScaled((ctx) => {
+        ctx.fillStyle = options.colors[4];
+        ctx.fillRect(0, 0, options.worldSize.x, options.worldSize.y);
+    });
     [
         state.ocean.background,
         ...state.boats,
@@ -125,14 +115,14 @@ const update = () => {
         ...state.environment,
         state.ocean.foreground,
         ...state.overlay
-    ].forEach((thing) => {
-        state.ctx.save();
-        state.ctx.scale(state.canvasScale, state.canvasScale);
-        thing.draw(state.ctx, time);
-        state.ctx.restore();
-    });
+    ].forEach((thing) => thing.render(state.view, time));
 
     requestAnimationFrame(update);
+};
+
+const scaleContext = (ctx) => {
+    ctx.save();
+    ctx.scale(state.canvasScale, state.canvasScale);
 };
 
 const gameOver = () => {

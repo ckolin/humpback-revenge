@@ -3,7 +3,7 @@ class Boat {
         this.thing = new Thing(new Sprite("boat"), position);
     }
 
-    draw(ctx, time) {
-        this.thing.draw(ctx, time);
+    render(view, time) {
+        this.thing.render(view, time);
     }
 }

@@ -5,10 +5,12 @@ class Thing {
         this.forward = forward;
     }
 
-    draw(ctx, time) {
-        ctx.translate(this.position.x, this.position.y);
-        ctx.rotate(Vec.angle(this.forward));
-        const scaleX = this.forward.x < 0 ? -1 : 1;
-        this.sprite.draw(ctx, time, scaleX);
+    render(view, time) {
+        view.callScaledAndTranslated((ctx) => {
+            ctx.translate(this.position.x, this.position.y);
+            ctx.rotate(Vec.angle(this.forward));
+            const scaleX = this.forward.x < 0 ? -1 : 1;
+            this.sprite.draw(ctx, time, scaleX);
+        });
     }
 }

@@ -13,24 +13,28 @@ class Ocean {
             this.points.push({height: 0, velocity: 0});
 
         this.foreground = {
-            draw: (ctx, time) => {
-                for (let x = 0; x < this.size.x; x++) {
-                    const y = Math.floor(this.size.y - this.height(x, time));
-                    ctx.fillStyle = options.colors[12];
-                    ctx.fillRect(x, y, 1, 2);
-                    ctx.fillStyle = options.colors[11];
-                    ctx.fillRect(x, y + 2, 1, 1);
-                }
+            render: (view, time) => {
+                view.callScaledAndTranslated((ctx) => {
+                    for (let x = 0; x < this.size.x; x++) {
+                        const y = Math.floor(this.size.y - this.height(x, time));
+                        ctx.fillStyle = options.colors[12];
+                        ctx.fillRect(x, y, 1, 2);
+                        ctx.fillStyle = options.colors[11];
+                        ctx.fillRect(x, y + 2, 1, 1);
+                    }
+                });
             }
         };
 
         this.background = {
-            draw: (ctx, time) => {
-                ctx.fillStyle = options.colors[10];
-                for (let x = 0; x < this.size.x; x++) {
-                    const y = Math.floor(this.size.y - this.height(x, time));
-                    ctx.fillRect(x, y + 3, 1, this.size.y - y - 3);
-                }
+            render: (view, time) => {
+                view.callScaledAndTranslated((ctx) => {
+                    ctx.fillStyle = options.colors[10];
+                    for (let x = 0; x < this.size.x; x++) {
+                        const y = Math.floor(this.size.y - this.height(x, time));
+                        ctx.fillRect(x, y + 3, 1, this.size.y - y - 3);
+                    }
+                });
             }
         };
     }

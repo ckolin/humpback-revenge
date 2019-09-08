@@ -26,17 +26,17 @@ class Whale {
     }
 
     update(delta) {
-        const targetDistance = state.target ? Vec.distance2(state.target, this.thing.position) : 0;
+        // Boost
         const wasBoostActivated = this.boostActivated;
         this.boostActivated = this.updateBoost(delta);
-
         if (this.boostActivated && !wasBoostActivated)
             this.bubbleEmitter.start(10);
         else if (!this.boostActivated && wasBoostActivated)
             this.bubbleEmitter.stop();
-
         this.bubbleEmitter.update(delta);
 
+        // Movement
+        const targetDistance = state.target ? Vec.distance2(state.target, this.thing.position) : 0;
         if (targetDistance > 15 || (this.thing.sprite === this.whaleSprite && targetDistance > 2)) {
             this.thing.forward = Vec.normalize(Vec.subtract(state.target, this.thing.position));
             const boostFactor = this.boostActivated ? 2 : 1;
@@ -49,6 +49,7 @@ class Whale {
     }
 
     collide(things) {
+        // TODO: Refine hitbox
         return things.filter((thing) => Vec.distance2(this.thing.position, thing.position) < 20);
     }
 
@@ -63,8 +64,10 @@ class Whale {
         return false;
     }
 
-    draw(ctx, time) {
-        this.bubbleEmitter.draw(ctx);
-        this.thing.draw(ctx, time);
+    render(view, time) {
+        view.callScaledAndTranslated((ctx) => {
+            this.bubbleEmitter.draw(ctx);
+        });
+        this.thing.render(view, time);
     }
 }
