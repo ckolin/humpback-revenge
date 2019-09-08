@@ -6,7 +6,15 @@ class Whale {
         this.lives = 3;
         this.maxBoost = 2000;
         this.boost = this.maxBoost;
-        this.bubbleEmitter = new Emitter(options.colors.slice(11, 13), {x: 0, y: -.001}, 600, 1400, 1, 2, 0, 0.2);
+        this.boostActivated = false;
+        this.bubbleEmitter = new Emitter(
+            this.thing.position,
+            options.colors.slice(11, 13),
+            {x: 0, y: -.001},
+            600, 1400,
+            1, 2,
+            0, 0.2
+        );
     }
 
     hurt() {
@@ -19,12 +27,19 @@ class Whale {
 
     update(delta) {
         const targetDistance = state.target ? Vec.distance2(state.target, this.thing.position) : 0;
-        const boostActivated = this.updateBoost(delta);
+        const wasBoostActivated = this.boostActivated;
+        this.boostActivated = this.updateBoost(delta);
+
+        if (this.boostActivated && !wasBoostActivated)
+            this.bubbleEmitter.start(10);
+        else if (!this.boostActivated && wasBoostActivated)
+            this.bubbleEmitter.stop();
+
         this.bubbleEmitter.update(delta);
 
         if (targetDistance > 15 || (this.thing.sprite === this.whaleSprite && targetDistance > 2)) {
             this.thing.forward = Vec.normalize(Vec.subtract(state.target, this.thing.position));
-            const boostFactor = boostActivated ? 2 : 1;
+            const boostFactor = this.boostActivated ? 2 : 1;
             this.thing.position = Vec.add(this.thing.position, Vec.scale(this.thing.forward, delta * 0.02 * boostFactor));
             this.thing.sprite = this.whaleSprite;
         } else {
@@ -33,10 +48,14 @@ class Whale {
         }
     }
 
+    collide(things) {
+        return things.filter((thing) => Vec.distance2(this.thing.position, thing.position) < 20);
+    }
+
     updateBoost(delta) {
+        this.bubbleEmitter.position = this.thing.position;
         if (this.boost > 0 && state.input.boost) {
             this.boost = Math.max(this.boost - delta, 0);
-            this.bubbleEmitter.emit(this.thing.position, 1, 0);
             return true;
         }
         if (!state.input.boost)
