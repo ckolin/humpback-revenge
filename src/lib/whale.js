@@ -1,7 +1,7 @@
 class Whale {
     constructor() {
         this.whaleSprite = new Sprite("whale", 4, 400);
-        this.whaleFrontSprite = new Sprite("whale-front");
+        this.whaleFrontSprite = new Sprite("whale-front", 2, 800);
         this.thing = new Thing(this.whaleFrontSprite, {x: 20, y: 60});
         this.lives = 3;
         this.maxBoost = 2000;
