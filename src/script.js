@@ -44,9 +44,9 @@ window.addEventListener("load", () => {
     state.environment = [
         new Thing(new Sprite("stone"), {x: 68, y: 93}, {x: 0, y: 1}),
         new Thing(new Sprite("stone"), {x: 60, y: 95}),
-        new Thing(new Sprite("seaweed", 4, 600, 0), {x: 140, y: 86}),
-        new Thing(new Sprite("seaweed", 4, 600, 2), {x: 160, y: 84}),
-        new Thing(new Sprite("seaweed", 4, 600, 1), {x: 180, y: 82})
+        new Thing(new Sprite("seaweed", 4, 600, 0), {x: 140, y: 90}),
+        new Thing(new Sprite("seaweed", 4, 600, 2), {x: 160, y: 88}),
+        new Thing(new Sprite("seaweed", 4, 600, 1), {x: 180, y: 86})
     ];
     state.overlay = [
         new Label(() => `${state.score} PTS`, {x: 50, y: 1}),
