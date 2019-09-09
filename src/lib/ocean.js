@@ -1,5 +1,5 @@
 class Ocean {
-    constructor(size, seaLevel) {
+    constructor(size = options.worldSize, seaLevel = 80) {
         this.size = size;
         this.seaLevel = seaLevel;
         this.sines = [
@@ -63,6 +63,6 @@ class Ocean {
     }
 
     height(x, time) {
-        return this.seaLevel + this.points[x].height + this.sineSum(x, time);
+        return this.seaLevel + this.points[x].height + this.sineSum(x + state.view.camera.x, time);
     }
 }
