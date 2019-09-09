@@ -12,22 +12,31 @@ class Emitter {
         this.startAngle = startAngle;
         this.endAngle = endAngle;
         this.particles = [];
-        this.emitInterval = null;
+        this.interval = Infinity;
+        this.timeSinceLastEmission = 0;
     }
 
     start(interval) {
-        // TODO: Remove setInterval
-        this.emitInterval = setInterval(() => this.emitSingle(), interval);
+        this.interval = interval;
     }
 
     stop() {
-        clearInterval(this.emitInterval);
+        this.interval = Infinity;
     }
 
-    emit(count, duration = 100) {
-        for (let i = 0; i < count; i++) {
-            setTimeout(() => this.emitSingle(), i / count * duration);
+    update(delta) {
+        this.timeSinceLastEmission += delta;
+        if (this.timeSinceLastEmission > this.interval) {
+            this.emitSingle();
+            this.timeSinceLastEmission = 0;
         }
+
+        this.particles.forEach((particle) => particle.life -= delta);
+        this.particles = this.particles.filter((particle) => particle.life > 0);
+        this.particles.forEach((particle) => {
+            particle.velocity = Vec.add(Vec.scale(particle.velocity, 0.99), this.gravity);
+            particle.position = Vec.add(particle.position, Vec.scale(particle.velocity, 0.1 * delta));
+        });
     }
 
     emitSingle() {
@@ -39,15 +48,6 @@ class Emitter {
             velocity: {x: speed * Math.cos(angle), y: -speed * Math.sin(angle)},
             size: this.minSize + (this.maxSize - this.minSize) * Math.random(),
             color: this.colors[Math.floor(Math.random() * this.colors.length)]
-        });
-    }
-
-    update(delta) {
-        this.particles.forEach((particle) => particle.life -= delta);
-        this.particles = this.particles.filter((particle) => particle.life > 0);
-        this.particles.forEach((particle) => {
-            particle.velocity = Vec.add(Vec.scale(particle.velocity, 0.99), this.gravity);
-            particle.position = Vec.add(particle.position, particle.velocity);
         });
     }
 
