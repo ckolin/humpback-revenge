@@ -24,6 +24,11 @@ class Emitter {
         this.interval = Infinity;
     }
 
+    burst(count) {
+        for (let i = 0; i < count; i++)
+            this.emitSingle();
+    }
+
     update(delta) {
         this.timeSinceLastEmission += delta;
         if (this.timeSinceLastEmission > this.interval) {
