@@ -4,6 +4,8 @@ class Whale {
         this.whaleFrontSprite = new Sprite("whale-front", 2, 800);
         this.thing = new Thing(this.whaleFrontSprite, {x: 20, y: 60});
         this.lives = 3;
+        this.velocity = {x: 0, y: 0};
+        this.gravity = {x: 0, y: 0.1};
         this.maxBoost = 2000;
         this.boost = this.maxBoost;
         this.boostActivated = false;
@@ -36,16 +38,18 @@ class Whale {
         this.bubbleEmitter.update(delta);
 
         // Movement
-        const targetDistance = state.target ? Vec.distance2(state.target, this.thing.position) : 0;
-        if (targetDistance > 15 || (this.thing.sprite === this.whaleSprite && targetDistance > 2)) {
-            this.thing.forward = Vec.normalize(Vec.subtract(state.target, this.thing.position));
-            const boostFactor = this.boostActivated ? 2 : 1;
-            this.thing.position = Vec.add(this.thing.position, Vec.scale(this.thing.forward, delta * 0.02 * boostFactor));
+        if (this.shouldMove()) {
             this.thing.sprite = this.whaleSprite;
+            this.thing.forward = Vec.normalize(Vec.subtract(state.target, this.thing.position));
+            if (this.isInWater()) this.velocity = Vec.add(this.velocity, Vec.scale(this.thing.forward, this.boostActivated ? 2 : 1));
+            else this.velocity = Vec.add(this.velocity, this.gravity);
         } else {
-            this.thing.forward = {x: 1, y: 0};
             this.thing.sprite = this.whaleFrontSprite;
+            this.thing.forward = {x: 1, y: 0};
         }
+
+        this.velocity = Vec.scale(this.velocity, this.isInWater() ? 0.75 : 0.999);
+        this.thing.position = Vec.add(this.thing.position, Vec.scale(this.velocity, 0.01 * delta));
     }
 
     collide(things) {
@@ -62,6 +66,15 @@ class Whale {
         if (!state.input.boost)
             this.boost = Math.min(this.boost + delta * 0.3, this.maxBoost);
         return false;
+    }
+
+    shouldMove() {
+        const targetDistance = state.target ? Vec.distance2(state.target, this.thing.position) : 0;
+        return targetDistance > 15 || (this.thing.sprite === this.whaleSprite && targetDistance > 2);
+    }
+
+    isInWater() {
+        return this.thing.position.y > (options.worldSize.y - state.ocean.seaLevel);
     }
 
     render(view, time) {
