@@ -11,6 +11,10 @@ class Vec {
         return {x: a.x * b.x, y: a.y * b.y};
     }
 
+    static dot(a, b) {
+        return a.x * b.x + a.y * b.y;
+    }
+
     static cross(a, b) {
         return a.x * b.y - a.y * b.x;
     }
