@@ -20,6 +20,7 @@ const state = {
     lastUpdate: null,
     target: null, // TODO: Replace with direction input
     sfx: null,
+    layers: null,
     input: {
         boost: false
     }
@@ -31,48 +32,55 @@ window.addEventListener("load", () => {
     state.sfx.init();
     if (!dbg()) state.sfx.startMusic();
 
-    // Game objects
-    state.ocean = new Ocean(options.worldSize, 80);
+    state.ocean = new Ocean();
     state.whale = new Whale();
-    state.boats = [
-        new Boat({x: 40, y: 15}),
-        new Boat({x: 100, y: 15})
-    ];
-    state.submarines = [
-        new Thing(new Sprite("submarine"), {x: 150, y: 60})
-    ];
-    state.environment = [
-        new Thing(new Sprite("stone"), {x: 68, y: 93}, {x: 0, y: 1}),
-        new Thing(new Sprite("stone"), {x: 60, y: 95}),
-        new Thing(new Sprite("seaweed", 4, 600, 0), {x: 140, y: 90}),
-        new Thing(new Sprite("seaweed", 4, 600, 2), {x: 160, y: 88}),
-        new Thing(new Sprite("seaweed", 4, 600, 1), {x: 180, y: 86})
-    ];
-    state.overlay = [
-        new Label(() => `${state.score} PTS`, {x: 50, y: 1}),
-        { // TODO: Extract
-            render: (screen) => {
-                screen.callScaled((ctx) => {
-                    const width = 20;
-                    ctx.fillStyle = options.colors[0];
-                    ctx.fillRect(1, options.worldSize.y - 5, width + 2, 4);
-                    ctx.fillStyle = options.colors[12];
-                    ctx.fillRect(2, options.worldSize.y - 4, Math.floor((state.whale.boost / state.whale.maxBoost) * width), 2);
-                });
+
+    // Game objects
+    state.layers = {
+        background: [
+            state.ocean.background,
+            new Floor()
+        ],
+        boats: [
+            new Boat({x: 40, y: 15}),
+            new Boat({x: 100, y: 15}),
+            new Thing(new Sprite("submarine"), {x: 150, y: 60})
+        ],
+        whale: [state.whale],
+        foreground: [
+            new Thing(new Sprite("stone"), {x: 68, y: 93}, {x: 0, y: 1}),
+            new Thing(new Sprite("stone"), {x: 60, y: 95}),
+            new Thing(new Sprite("seaweed", 4, 600, 0), {x: 140, y: 90}),
+            new Thing(new Sprite("seaweed", 4, 600, 2), {x: 160, y: 88}),
+            new Thing(new Sprite("seaweed", 4, 600, 1), {x: 180, y: 86}),
+            state.ocean.foreground
+        ],
+        overlay: [
+            new Label(() => `${state.score} PTS`, {x: 50, y: 1}),
+            { // TODO: Extract
+                render: (screen) => {
+                    screen.callScaled((ctx) => {
+                        const width = 20;
+                        ctx.fillStyle = options.colors[0];
+                        ctx.fillRect(1, options.worldSize.y - 5, width + 2, 4);
+                        ctx.fillStyle = options.colors[12];
+                        ctx.fillRect(2, options.worldSize.y - 4, Math.floor((state.whale.boost / state.whale.maxBoost) * width), 2);
+                    });
+                }
+            }, { // TODO: Extract
+                render: (screen) => {
+                    screen.callScaled((ctx) => {
+                        const sprite = new Sprite("heart", 1, 0, 0, false);
+                        ctx.translate(1, 1);
+                        for (let i = 0; i < state.whale.lives; i++) {
+                            sprite.draw(ctx);
+                            ctx.translate(sprite.frameWidth + 1, 0);
+                        }
+                    });
+                }
             }
-        }, { // TODO: Extract
-            render: (screen) => {
-                screen.callScaled((ctx) => {
-                    const sprite = new Sprite("heart", 1, 0, 0, false);
-                    ctx.translate(1, 1);
-                    for (let i = 0; i < state.whale.lives; i++) {
-                        sprite.draw(ctx);
-                        ctx.translate(sprite.frameWidth + 1, 0);
-                    }
-                });
-            }
-        }
-    ];
+        ]
+    };
 
     // Event handlers
     window.addEventListener("resize", () => state.view.resize());
@@ -86,7 +94,7 @@ window.addEventListener("load", () => {
     window.addEventListener("mousedown", () => state.input.boost = true);
     window.addEventListener("mouseup", () => state.input.boost = false);
 
-    update();
+    requestAnimationFrame(update);
 });
 
 const update = () => {
@@ -98,9 +106,7 @@ const update = () => {
     [
         state.ocean,
         state.whale
-    ].forEach((thing) => {
-        thing.update(delta);
-    });
+    ].forEach((thing) => thing.update(delta));
 
     // Rendering
     state.view.callScaled((ctx) => {
@@ -108,14 +114,15 @@ const update = () => {
         ctx.fillRect(0, 0, options.worldSize.x, options.worldSize.y);
     });
     [
-        state.ocean.background,
-        ...state.boats,
-        ...state.submarines,
-        state.whale,
-        ...state.environment,
-        state.ocean.foreground,
-        ...state.overlay
-    ].forEach((thing) => thing.render(state.view, time));
+        state.layers.background,
+        state.layers.boats,
+        state.layers.whale,
+        state.layers.foreground,
+        state.layers.overlay
+    ].forEach((layer) => {
+        layer = layer.filter((thing) => !thing.toDelete);
+        layer.forEach((thing) => thing.render(state.view, time))
+    });
 
     requestAnimationFrame(update);
 };
