@@ -30,7 +30,7 @@ class View {
     callScaledAndTranslated(fn) {
         this.ctx.save();
         this.ctx.scale(this.canvasScale, this.canvasScale);
-        this.ctx.translate(this.camera.x, this.camera.y);
+        this.ctx.translate(-this.camera.x, -this.camera.y);
         fn(this.ctx);
         this.ctx.restore();
     }

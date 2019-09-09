@@ -18,7 +18,6 @@ const state = {
     screen: null,
     lastUpdate: null,
     target: null, // TODO: Replace with direction input
-    camera: {x: 0, y: 0},
     sfx: null,
     input: {
         boost: false
@@ -77,10 +76,10 @@ window.addEventListener("load", () => {
     // Event handlers
     window.addEventListener("resize", () => state.view.resize());
     window.addEventListener("mousemove", (e) => {
-        state.target = Vec.scale({
+        state.target = Vec.add(Vec.scale({
             x: e.pageX - state.view.canvas.offsetLeft,
             y: e.pageY - state.view.canvas.offsetTop
-        }, 1 / state.view.canvasScale);
+        }, 1 / state.view.canvasScale), state.view.camera);
     });
     window.addEventListener("contextmenu", (e) => e.preventDefault());
     window.addEventListener("mousedown", () => state.input.boost = true);

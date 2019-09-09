@@ -14,7 +14,7 @@ class Ocean {
 
         this.foreground = {
             render: (view, time) => {
-                view.callScaledAndTranslated((ctx) => {
+                view.callScaled((ctx) => {
                     for (let x = 0; x < this.size.x; x++) {
                         const y = Math.floor(this.size.y - this.height(x, time));
                         ctx.fillStyle = options.colors[12];
@@ -28,7 +28,7 @@ class Ocean {
 
         this.background = {
             render: (view, time) => {
-                view.callScaledAndTranslated((ctx) => {
+                view.callScaled((ctx) => {
                     ctx.fillStyle = options.colors[10];
                     for (let x = 0; x < this.size.x; x++) {
                         const y = Math.floor(this.size.y - this.height(x, time));
