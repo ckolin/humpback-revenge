@@ -42,10 +42,10 @@ window.addEventListener("load", () => {
             state.ocean.background,
             state.floor
         ],
-        boats: [
-            new Boat({x: 40, y: 15}),
-            new Boat({x: 100, y: 15}),
-            new Thing(new Sprite("submarine"), {x: 150, y: 60})
+        enemies: [
+            new Boat({x: 40, y: 16}),
+            new Boat({x: 100, y: 16}),
+            new Submarine({x: 150, y: 60})
         ],
         whale: [state.whale],
         foreground: [
@@ -107,7 +107,8 @@ const update = () => {
     [
         state.ocean,
         state.whale,
-        state.view
+        state.view,
+        ...state.layers.enemies
     ].forEach((thing) => thing.update(delta));
 
     // Rendering
@@ -117,7 +118,7 @@ const update = () => {
     });
     [
         state.layers.background,
-        state.layers.boats,
+        state.layers.enemies,
         state.layers.whale,
         state.layers.foreground,
         state.layers.overlay

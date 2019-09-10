@@ -4,8 +4,15 @@ class Whale {
         this.whaleFrontSprite = new Sprite("whale-front", 2, 800);
         this.thing = new Thing(this.whaleFrontSprite, {x: 20, y: 60});
         this.lives = 3;
+
         this.velocity = {x: 0, y: 0};
         this.gravity = {x: 0, y: 0.1};
+        this.physicsState = {
+            shouldMove: false,
+            isInWater: true,
+            isOnFloor: false
+        };
+
         this.maxBoost = 2000;
         this.boost = this.maxBoost;
         this.boostActivated = false;
@@ -21,13 +28,19 @@ class Whale {
 
     hurt() {
         this.lives--;
-        if (this.lives <= 0)
-            gameOver();
-        else
-            state.sfx.hurt();
+        if (this.lives <= 0) gameOver();
+        else state.sfx.hurt();
     }
 
     update(delta) {
+        const lastState = this.physicsState;
+        this.physicsState = this.getPhysicsState();
+
+        // Effects
+        if (this.physicsState.isInWater && !lastState.isInWater) {
+            state.ocean.splash(Vec.subtract(this.thing.position, state.view.camera).x, -.5, 14);
+        }
+
         // Boost
         const wasBoostActivated = this.boostActivated;
         this.boostActivated = this.updateBoost(delta);
@@ -38,13 +51,13 @@ class Whale {
         this.bubbleEmitter.update(delta);
 
         // Movement
-        if (this.shouldMove() || !this.isInWater()) {
+        if (this.physicsState.shouldMove || !this.physicsState.isInWater) {
             this.thing.sprite = this.whaleSprite;
-            this.thing.forward = Vec.scale(state.direction, 0.02);
+            this.thing.forward = Vec.scale(state.direction, 0.01);
             let newVelocity;
-            if (this.isInWater()) {
+            if (this.physicsState.isInWater) {
                 newVelocity = Vec.scale(this.thing.forward, this.boostActivated ? 2 : 1);
-                if (this.isOnFloor())
+                if (this.physicsState.isOnFloor)
                     newVelocity = Vec.multiply(newVelocity, {x: 1, y: Vec.dot(newVelocity, {x: 0, y: -1})});
             } else {
                 newVelocity = this.gravity;
@@ -55,7 +68,7 @@ class Whale {
             this.thing.forward = {x: 1, y: 0};
         }
 
-        this.velocity = Vec.scale(this.velocity, this.isInWater() ? 0.75 : 0.999);
+        this.velocity = Vec.scale(this.velocity, this.physicsState.isInWater ? 0.75 : 0.999);
         this.thing.position = Vec.add(this.thing.position, Vec.scale(this.velocity, 0.01 * delta));
     }
 
@@ -75,17 +88,16 @@ class Whale {
         return false;
     }
 
-    shouldMove() {
+    getPhysicsState() {
         const diff = Vec.length2(state.direction);
-        return diff > 100 || (this.thing.sprite === this.whaleSprite && diff > 40);
-    }
-
-    isInWater() {
-        return this.thing.position.y > state.ocean.level;
-    }
-
-    isOnFloor() {
-        return this.thing.position.y > state.floor.level;
+        const shouldMove = diff > 100 || (this.thing.sprite === this.whaleSprite && diff > 40);
+        const isInWater = this.thing.position.y > state.ocean.height(Vec.subtract(this.thing.position, state.view.camera).x);
+        const isOnFloor = this.thing.position.y > state.floor.level;
+        return {
+            shouldMove,
+            isInWater,
+            isOnFloor
+        };
     }
 
     render(view, time) {
