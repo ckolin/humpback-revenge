@@ -38,9 +38,9 @@ class Whale {
         this.bubbleEmitter.update(delta);
 
         // Movement
-        if (this.shouldMove()) {
+        if (this.shouldMove() || !this.isInWater()) {
             this.thing.sprite = this.whaleSprite;
-            this.thing.forward = Vec.normalize(Vec.subtract(Vec.add(state.target, state.view.camera), this.thing.position));
+            this.thing.forward = Vec.scale(state.direction, 0.02);
             let newVelocity;
             if (this.isInWater()) {
                 newVelocity = Vec.scale(this.thing.forward, this.boostActivated ? 2 : 1);
@@ -76,8 +76,8 @@ class Whale {
     }
 
     shouldMove() {
-        const targetDistance = state.target ? Vec.distance2(Vec.add(state.target, state.view.camera), this.thing.position) : 0;
-        return targetDistance > 15 || (this.thing.sprite === this.whaleSprite && targetDistance > 2);
+        const diff = Vec.length2(state.direction);
+        return diff > 100 || (this.thing.sprite === this.whaleSprite && diff > 40);
     }
 
     isInWater() {

@@ -7,7 +7,6 @@ const options = {
     volume: 0.2,
     maxScale: 8,
     worldSize: {x: 200, y: 100},
-    timeScale: 1,
     colors: [
         "#1a1c2c", "#5d275d", "#b13e53", "#ef7d57", "#ffcd75", "#a7f070", "#38b764", "#257179",
         "#29366f", "#3b5dc9", "#41a6f6", "#73eff7", "#f4f4f4", "#94b0c2", "#566c86", "#333c57"
@@ -18,7 +17,7 @@ const state = {
     score: 0,
     screen: null,
     lastUpdate: null,
-    target: null, // TODO: Replace with direction input
+    direction: {x: 0, y: 0},
     sfx: null,
     layers: null,
     input: {
@@ -85,12 +84,6 @@ window.addEventListener("load", () => {
 
     // Event handlers
     window.addEventListener("resize", () => state.view.resize());
-    window.addEventListener("mousemove", (e) => {
-        state.target = Vec.scale({
-            x: e.pageX - state.view.canvas.offsetLeft,
-            y: e.pageY - state.view.canvas.offsetTop
-        }, 1 / state.view.canvasScale);
-    });
     window.addEventListener("contextmenu", (e) => e.preventDefault());
     window.addEventListener("mousedown", () => state.input.boost = true);
     window.addEventListener("mouseup", () => state.input.boost = false);
@@ -99,7 +92,7 @@ window.addEventListener("load", () => {
 });
 
 const update = () => {
-    const time = Date.now() * options.timeScale;
+    const time = Date.now();
     const delta = state.lastUpdate ? time - state.lastUpdate : 0;
     state.lastUpdate = time;
 
