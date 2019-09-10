@@ -86,10 +86,10 @@ window.addEventListener("load", () => {
     // Event handlers
     window.addEventListener("resize", () => state.view.resize());
     window.addEventListener("mousemove", (e) => {
-        state.target = Vec.add(Vec.scale({
+        state.target = Vec.scale({
             x: e.pageX - state.view.canvas.offsetLeft,
             y: e.pageY - state.view.canvas.offsetTop
-        }, 1 / state.view.canvasScale), state.view.camera);
+        }, 1 / state.view.canvasScale);
     });
     window.addEventListener("contextmenu", (e) => e.preventDefault());
     window.addEventListener("mousedown", () => state.input.boost = true);
@@ -106,7 +106,8 @@ const update = () => {
     // Update
     [
         state.ocean,
-        state.whale
+        state.whale,
+        state.view
     ].forEach((thing) => thing.update(delta));
 
     // Rendering

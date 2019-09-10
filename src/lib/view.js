@@ -4,6 +4,7 @@ class View {
         this.ctx = this.canvas.getContext("2d");
         this.canvasScale = null;
         this.camera = {x: 0, y: 0};
+        this.cameraVelocity = {x: 0, y: 0};
         this.resize();
     }
 
@@ -19,6 +20,13 @@ class View {
         this.canvas.style.top = `${(window.innerHeight - canvasSize.y) / 2}px`;
         this.ctx.imageSmoothingEnabled = false;
     };
+
+    update(delta) {
+        const diff = state.whale.thing.position.x - this.camera.x - options.worldSize.x / 2;
+        this.cameraVelocity = Vec.add(this.cameraVelocity, {x: diff, y: 0});
+        this.cameraVelocity = Vec.scale(this.cameraVelocity, 0.1);
+        this.camera = Vec.add(this.camera, Vec.scale(this.cameraVelocity, 0.01 * delta));
+    }
 
     callScaled(fn) {
         this.ctx.save();
