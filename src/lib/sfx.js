@@ -7,6 +7,10 @@ class Sfx {
         Sfx.play([14, 14, 7, 7], "square", 400, 0.05);
     }
 
+    explosion() {
+        Sfx.play([1], "triangle", 20, 0.3);
+    }
+
     hurt() {
         Sfx.play([1], "square", 20, 0.2);
     }

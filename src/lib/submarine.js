@@ -4,6 +4,12 @@ class Submarine {
         this.velocity = {x: 0, y: 0};
     }
 
+    destroy() {
+        state.sfx.explosion();
+        state.score += 100;
+        this.toDelete = true;
+    }
+
     update(delta) {
 
     }

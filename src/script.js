@@ -116,15 +116,15 @@ const update = () => {
         ctx.fillStyle = options.colors[4];
         ctx.fillRect(0, 0, options.worldSize.x, options.worldSize.y);
     });
-    [
-        state.layers.background,
-        state.layers.enemies,
-        state.layers.whale,
-        state.layers.foreground,
-        state.layers.overlay
+    [ // TODO: Remove strings
+        "background",
+        "enemies",
+        "whale",
+        "foreground",
+        "overlay"
     ].forEach((layer) => {
-        layer = layer.filter((thing) => !thing.toDelete);
-        layer.forEach((thing) => thing.render(state.view, time))
+        state.layers[layer] = state.layers[layer].filter((thing) => !thing.toDelete);
+        state.layers[layer].forEach((thing) => thing.render(state.view, time));
     });
     requestAnimationFrame(update);
 };

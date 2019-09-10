@@ -4,6 +4,12 @@ class Boat {
         this.velocity = {x: 0, y: 0};
     }
 
+    destroy() {
+        state.sfx.explosion();
+        state.score += 100;
+        this.toDelete = true;
+    }
+
     update(delta) {
         const x = Vec.subtract(this.thing.position, state.view.camera).x;
 
