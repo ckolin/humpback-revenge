@@ -1,7 +1,7 @@
 class Floor {
-    constructor(size = options.worldSize, floorLevel = 10) {
+    constructor(size = options.worldSize, level = 90) {
         this.size = size;
-        this.floorLevel = floorLevel;
+        this.level = level;
         this.sines = [
             {a: 1, b: 0.09},
             {a: 0.8, b: 0.05}
@@ -11,7 +11,7 @@ class Floor {
     render(view, time) {
         view.callScaled((ctx) => {
             for (let x = 0; x < this.size.x; x++) {
-                const y = Math.floor(this.size.y - this.height(x));
+                const y = Math.floor(this.height(x));
                 ctx.fillStyle = options.colors[13];
                 ctx.fillRect(x, y, 1, 2);
                 ctx.fillStyle = options.colors[14];
@@ -27,6 +27,6 @@ class Floor {
     }
 
     height(x) {
-        return this.floorLevel + this.sineSum(x + state.view.camera.x);
+        return this.level - this.sineSum(x + state.view.camera.x);
     }
 }

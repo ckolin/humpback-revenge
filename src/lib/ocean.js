@@ -1,7 +1,7 @@
 class Ocean {
-    constructor(size = options.worldSize, seaLevel = 80) {
+    constructor(size = options.worldSize, level = 20) {
         this.size = size;
-        this.seaLevel = seaLevel;
+        this.level = level;
         this.sines = [
             {a: 1, b: 0.09, c: 0.001},
             {a: 1, b: 0.04, c: 0.0015},
@@ -16,7 +16,7 @@ class Ocean {
             render: (view, time) => {
                 view.callScaled((ctx) => {
                     for (let x = 0; x < this.size.x; x++) {
-                        const y = Math.floor(this.size.y - this.height(x, time));
+                        const y = Math.floor(this.height(x, time));
                         ctx.fillStyle = options.colors[12];
                         ctx.fillRect(x, y, 1, 2);
                         ctx.fillStyle = options.colors[11];
@@ -31,7 +31,7 @@ class Ocean {
                 view.callScaled((ctx) => {
                     ctx.fillStyle = options.colors[10];
                     for (let x = 0; x < this.size.x; x++) {
-                        const y = Math.floor(this.size.y - this.height(x, time));
+                        const y = Math.floor(this.height(x, time));
                         ctx.fillRect(x, y + 3, 1, this.size.y - y - 3);
                     }
                 });
@@ -63,6 +63,6 @@ class Ocean {
     }
 
     height(x, time) {
-        return this.seaLevel + this.points[x].height + this.sineSum(x + state.view.camera.x, time);
+        return this.level - this.points[x].height - this.sineSum(x + state.view.camera.x, time);
     }
 }
