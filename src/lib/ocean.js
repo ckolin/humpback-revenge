@@ -41,7 +41,7 @@ class Ocean {
     }
 
     splash(startX, force = 1, width = 12) {
-        for (let x = Math.floor(startX); x < startX + width; x++)
+        for (let x = Math.floor(startX - width / 2); x < startX + width / 2; x++)
             if (x > 0 && x < this.size.x)
                 this.points[x].velocity += force;
     }

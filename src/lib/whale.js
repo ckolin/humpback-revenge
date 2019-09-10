@@ -37,9 +37,8 @@ class Whale {
         this.physicsState = this.getPhysicsState();
 
         // Effects
-        if (this.physicsState.isInWater && !lastState.isInWater) {
-            state.ocean.splash(Vec.subtract(this.thing.position, state.view.camera).x, -.5, 14);
-        }
+        if (this.physicsState.isInWater && !lastState.isInWater)
+            state.ocean.splash(Vec.subtract(this.thing.position, state.view.camera).x, .5, 12);
 
         // Boost
         const wasBoostActivated = this.boostActivated;
