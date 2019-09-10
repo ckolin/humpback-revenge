@@ -14,6 +14,7 @@ const options = {
 };
 
 const state = {
+    paused: false,
     score: 0,
     screen: null,
     lastUpdate: null,
@@ -48,11 +49,11 @@ window.addEventListener("load", () => {
         ],
         whale: [state.whale],
         foreground: [
-            new Thing(new Sprite("stone"), {x: 68, y: 93}, {x: 0, y: 1}),
-            new Thing(new Sprite("stone"), {x: 60, y: 95}),
-            new Thing(new Sprite("seaweed", 4, 600, 0), {x: 140, y: 90}),
-            new Thing(new Sprite("seaweed", 4, 600, 2), {x: 160, y: 88}),
-            new Thing(new Sprite("seaweed", 4, 600, 1), {x: 180, y: 86}),
+            new Thing(new Sprite("stone"), {x: 68, y: 89}, {x: 0, y: 1}),
+            new Thing(new Sprite("stone"), {x: 60, y: 94}),
+            new Thing(new Sprite("seaweed", 4, 600, 0), {x: 140, y: 80}),
+            new Thing(new Sprite("seaweed", 4, 600, 2), {x: 160, y: 78}),
+            new Thing(new Sprite("seaweed", 4, 600, 1), {x: 180, y: 76}),
             state.ocean.foreground
         ],
         overlay: [
@@ -87,6 +88,8 @@ window.addEventListener("load", () => {
     window.addEventListener("contextmenu", (e) => e.preventDefault());
     window.addEventListener("mousedown", () => state.input.boost = true);
     window.addEventListener("mouseup", () => state.input.boost = false);
+    window.addEventListener("blur", () => state.paused = true);
+    window.addEventListener("focus", () => state.paused = false);
 
     requestAnimationFrame(update);
 });
@@ -95,6 +98,11 @@ const update = () => {
     const time = Date.now();
     const delta = state.lastUpdate ? time - state.lastUpdate : 0;
     state.lastUpdate = time;
+
+    if (state.paused) {
+        requestAnimationFrame(update);
+        return;
+    }
 
     // Update
     [
