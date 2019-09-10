@@ -98,7 +98,6 @@ const update = () => {
     const time = Date.now();
     const delta = state.lastUpdate ? time - state.lastUpdate : 0;
     state.lastUpdate = time;
-
     if (state.paused) {
         requestAnimationFrame(update);
         return;
@@ -126,7 +125,6 @@ const update = () => {
         layer = layer.filter((thing) => !thing.toDelete);
         layer.forEach((thing) => thing.render(state.view, time))
     });
-
     requestAnimationFrame(update);
 };
 

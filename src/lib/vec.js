@@ -39,9 +39,8 @@ class Vec {
     }
 
     static normalize(vec) {
-        const length = Math.sqrt(Vec.length2(vec));
-        if (length === 0)
-            return vec;
+        const length = Math.hypot(vec.x, vec.y);
+        if (length === 0) return vec;
         return Vec.scale(vec, 1 / length);
     }
 
