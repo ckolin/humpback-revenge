@@ -40,9 +40,16 @@ class Whale {
         // Movement
         if (this.shouldMove()) {
             this.thing.sprite = this.whaleSprite;
-            this.thing.forward = Vec.normalize(Vec.subtract(state.target, this.thing.position));
-            if (this.isInWater()) this.velocity = Vec.add(this.velocity, Vec.scale(this.thing.forward, this.boostActivated ? 2 : 1));
-            else this.velocity = Vec.add(this.velocity, this.gravity);
+            this.thing.forward = Vec.normalize(Vec.subtract(Vec.add(state.target, state.view.camera), this.thing.position));
+            let newVelocity;
+            if (this.isInWater()) {
+                newVelocity = Vec.scale(this.thing.forward, this.boostActivated ? 2 : 1);
+                if (this.isOnFloor())
+                    newVelocity = Vec.multiply(newVelocity, {x: 1, y: Vec.dot(newVelocity, {x: 0, y: -1})});
+            } else {
+                newVelocity = this.gravity;
+            }
+            this.velocity = Vec.add(this.velocity, newVelocity);
         } else {
             this.thing.sprite = this.whaleFrontSprite;
             this.thing.forward = {x: 1, y: 0};
@@ -69,12 +76,16 @@ class Whale {
     }
 
     shouldMove() {
-        const targetDistance = state.target ? Vec.distance2(state.target, this.thing.position) : 0;
+        const targetDistance = state.target ? Vec.distance2(Vec.add(state.target, state.view.camera), this.thing.position) : 0;
         return targetDistance > 15 || (this.thing.sprite === this.whaleSprite && targetDistance > 2);
     }
 
     isInWater() {
-        return this.thing.position.y > (options.worldSize.y - state.ocean.seaLevel);
+        return this.thing.position.y > state.ocean.level;
+    }
+
+    isOnFloor() {
+        return this.thing.position.y > state.floor.level;
     }
 
     render(view, time) {

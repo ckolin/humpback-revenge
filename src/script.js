@@ -33,13 +33,14 @@ window.addEventListener("load", () => {
     if (!dbg()) state.sfx.startMusic();
 
     state.ocean = new Ocean();
+    state.floor = new Floor();
     state.whale = new Whale();
 
     // Game objects
     state.layers = {
         background: [
             state.ocean.background,
-            new Floor()
+            state.floor
         ],
         boats: [
             new Boat({x: 40, y: 15}),
