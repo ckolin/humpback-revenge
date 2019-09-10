@@ -65,6 +65,7 @@ class Ocean {
     }
 
     height(x) {
-        return this.level - this.points[x].height - this.sineSum(x + state.view.camera.x);
+        const point = x < 0 || x >= this.points.length ? 0 : this.points[Math.floor(x)].height;
+        return this.level - point - this.sineSum(x + state.view.camera.x);
     }
 }
