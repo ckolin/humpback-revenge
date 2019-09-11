@@ -29,7 +29,7 @@ class View {
     };
 
     update(delta) {
-        const diff = state.whale.thing.position.x - this.camera.x - options.worldSize.x / 2;
+        const diff = state.game.whale.thing.position.x - this.camera.x - options.worldSize.x / 2;
         this.cameraVelocity = Vec.add(this.cameraVelocity, {x: diff, y: 0});
         this.cameraVelocity = Vec.scale(this.cameraVelocity, 0.1);
         this.camera = Vec.add(this.camera, Vec.scale(this.cameraVelocity, 0.01 * delta));
