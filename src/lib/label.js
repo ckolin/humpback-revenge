@@ -1,7 +1,8 @@
 class Label {
-    constructor(valueFn, position = {x: 0, y: 0}) {
+    constructor(valueFn, position = {x: 0, y: 0}, rightAlign = false) {
         this.valueFn = valueFn;
         this.position = position;
+        this.rightAlign = rightAlign;
 
         this.font = document.getElementById("font");
         this.fontHeight = 7;
@@ -11,16 +12,28 @@ class Label {
 
     render(view) {
         view.callScaled((ctx) => {
+            const indexes = this.valueFn().toUpperCase()
+                .split("")
+                .map((char) => this.fontText.indexOf(char))
+                .filter((i) => i > 0);
+
             ctx.translate(this.position.x, this.position.y);
+            if (this.rightAlign)
+                ctx.translate(-this.stringWidth(indexes), 0);
+
             let x = 0;
-            for (let char of this.valueFn().toUpperCase()) {
-                const i = this.fontText.indexOf(char);
-                if (i < 0) continue;
+            for (let i of indexes) {
                 const pos = this.fontPositions[i];
                 const width = this.fontPositions[i + 1] - pos;
                 ctx.drawImage(this.font, pos, 0, width, this.fontHeight, x, 0, width, this.fontHeight);
                 x += width + 1;
             }
         });
+    }
+
+    stringWidth(indexes) {
+        return indexes
+            .map((i) => this.fontPositions[i + 1] - this.fontPositions[i] + 1)
+            .reduce((a, b) => a + b, -1);
     }
 }
