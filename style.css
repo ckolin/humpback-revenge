@@ -11,5 +11,6 @@ body {
 #canvas {
     position: absolute;
     box-shadow: black 8px 8px;
+    background: black;
     cursor: pointer;
 }
