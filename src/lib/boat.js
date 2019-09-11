@@ -7,7 +7,7 @@ class Boat {
     destroy() {
         state.game.explosionEmitter.burst(this.thing.position, 100);
         state.sfx.explosion();
-        state.score += 100;
+        state.game.score += 100;
         this.toDelete = true;
     }
 

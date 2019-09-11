@@ -7,6 +7,7 @@ class View {
         this.cameraVelocity = {x: 0, y: 0};
         this.directionRadius = 100;
         this.canvas.addEventListener("click", () => this.canvas.requestPointerLock());
+        document.addEventListener("pointerlockchange", () => state.paused = document.pointerLockElement !== this.canvas);
         this.canvas.addEventListener("mousemove", (e) => {
             state.direction = Vec.add(state.direction, {x: e.movementX, y: e.movementY});
             if (Vec.length(state.direction) > this.directionRadius)

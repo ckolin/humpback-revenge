@@ -1,7 +1,6 @@
 class Sfx {
     constructor() {
         this.musicInterval = null;
-        this.init();
     }
 
     init() {

@@ -15,7 +15,7 @@ class Label {
             const indexes = this.valueFn().toUpperCase()
                 .split("")
                 .map((char) => this.fontText.indexOf(char))
-                .filter((i) => i > 0);
+                .filter((i) => i >= 0);
 
             ctx.translate(this.position.x, this.position.y);
             if (this.rightAlign)

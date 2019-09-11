@@ -82,11 +82,11 @@ class Whale {
     }
 
     updateBoost(delta) {
-        if (this.boost > 0 && state.boost) {
+        if (this.boost > 0 && state.game.boost) {
             this.boost = Math.max(this.boost - delta, 0);
             return true;
         }
-        if (!state.boost)
+        if (!state.game.boost)
             this.boost = Math.min(this.boost + delta * 0.3, this.maxBoost);
         return false;
     }

@@ -1,6 +1,7 @@
 class Game {
     constructor() {
-        state.sfx.startMusic();
+        this.score = 0;
+        this.boost = false;
         this.ocean = new Ocean();
         this.floor = new Floor();
         this.whale = new Whale();
@@ -39,7 +40,7 @@ class Game {
             this.ocean.foreground
         ];
         state.layers.overlay = [
-            new Label(() => `${state.score} PTS`, {x: options.worldSize.x - 1, y: 1}, true),
+            new Label(() => `${this.score} PTS`, {x: options.worldSize.x - 1, y: 1}, true),
             { // TODO: Extract
                 render: (screen) => {
                     screen.callScaled((ctx) => {

@@ -15,25 +15,28 @@ const options = {
 
 const state = {
     paused: false,
-    score: 0,
     view: null,
     sfx: null,
+    intro: null,
+    game: null,
     lastUpdate: null,
     direction: {x: 0, y: 0},
     layers: {},
-    boost: false
 };
 
 window.addEventListener("load", () => {
     state.view = new View();
     state.sfx = new Sfx();
-    state.game = new Game();
+    state.intro = new Intro();
 
     // Event handlers
     window.addEventListener("resize", () => state.view.resize());
     window.addEventListener("contextmenu", (e) => e.preventDefault());
-    window.addEventListener("mousedown", () => state.boost = true);
-    window.addEventListener("mouseup", () => state.boost = false);
-    window.addEventListener("blur", () => state.paused = true);
-    window.addEventListener("focus", () => state.paused = false);
+    state.view.canvas.addEventListener("mousedown", () => {
+        if (state.game) state.game.boost = true;
+    });
+    state.view.canvas.addEventListener("mouseup", () => {
+        if (state.game) state.game.boost = false;
+        else state.intro.next();
+    });
 });
