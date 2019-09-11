@@ -34,6 +34,10 @@ class Vec {
         return Math.atan(vec.y / vec.x);
     }
 
+    static length(vec) {
+        return Math.hypot(vec.x, vec.y);
+    }
+
     static length2(vec) {
         return vec.x ** 2 + vec.y ** 2;
     }
