@@ -39,15 +39,19 @@ class Game {
             this.ocean.foreground
         ];
         state.layers.overlay = [
-            new Label(() => `${state.score} PTS`, {x: 50, y: 1}),
+            new Label(() => `${state.score} PTS`, {x: options.worldSize.x - 1, y: 1}, true),
             { // TODO: Extract
                 render: (screen) => {
                     screen.callScaled((ctx) => {
-                        const width = 20;
+                        const size = {x: 36, y: 5};
+                        const position = {x: 1, y: options.worldSize.y - size.y};
+                        const width = Math.floor((this.whale.boost / this.whale.maxBoost) * size.x);
                         ctx.fillStyle = options.colors[0];
-                        ctx.fillRect(1, options.worldSize.y - 5, width + 2, 4);
-                        ctx.fillStyle = options.colors[12];
-                        ctx.fillRect(2, options.worldSize.y - 4, Math.floor((this.whale.boost / this.whale.maxBoost) * width), 2);
+                        ctx.fillRect(position.x, position.y - 1, size.x + 2, size.y);
+                        ctx.fillStyle = options.colors[5];
+                        ctx.fillRect(position.x + 1, position.y, width, 1);
+                        ctx.fillStyle = options.colors[6];
+                        ctx.fillRect(position.x + 1, position.y + 1, width, size.y - 3);
                     });
                 }
             }, { // TODO: Extract
