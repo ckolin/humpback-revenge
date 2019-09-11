@@ -1,6 +1,7 @@
 class Sfx {
     constructor() {
         this.musicInterval = null;
+        if (!dbg()) this.startMusic();
     }
 
     init() {

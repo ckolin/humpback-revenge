@@ -1,6 +1,6 @@
 class Emitter {
-    constructor(position, colors, gravity, minLife, maxLife, minSize = 1, maxSize = 1, minSpeed = 0, maxSpeed = 0, startAngle = 0, endAngle = 2 * Math.PI) {
-        this.position = position;
+    constructor(colors, gravity, minLife, maxLife, minSize = 1, maxSize = 1, minSpeed = 0, maxSpeed = 0, minAngle = 0, maxAngle = 2 * Math.PI) {
+        this.position = null;
         this.colors = colors;
         this.gravity = gravity;
         this.minLife = minLife;
@@ -9,8 +9,8 @@ class Emitter {
         this.maxSize = maxSize;
         this.minSpeed = minSpeed;
         this.maxSpeed = maxSpeed;
-        this.startAngle = startAngle;
-        this.endAngle = endAngle;
+        this.minAngle = minAngle;
+        this.maxAngle = maxAngle;
         this.particles = [];
         this.interval = Infinity;
         this.timeSinceLastEmission = 0;
@@ -24,7 +24,8 @@ class Emitter {
         this.interval = Infinity;
     }
 
-    burst(count) {
+    burst(position, count) {
+        this.position = position;
         for (let i = 0; i < count; i++)
             this.emitSingle();
     }
@@ -45,22 +46,30 @@ class Emitter {
     }
 
     emitSingle() {
-        const angle = this.startAngle + (this.endAngle - this.startAngle) * Math.random();
-        const speed = this.minSpeed + (this.maxSpeed - this.minSpeed) * Math.random();
+        const life = this.random(this.minLife, this.maxLife);
+        const angle = this.random(this.minAngle, this.maxAngle);
+        const speed = this.random(this.minSpeed, this.maxSpeed);
+        const size = this.random(this.minSize, this.maxSize);
         this.particles.push({
-            life: this.minLife + (this.maxLife - this.minLife) * Math.random(),
+            life,
             position: this.position,
             velocity: {x: speed * Math.cos(angle), y: -speed * Math.sin(angle)},
-            size: this.minSize + (this.maxSize - this.minSize) * Math.random(),
+            size,
             color: this.colors[Math.floor(Math.random() * this.colors.length)]
         });
     }
 
-    draw(ctx) {
-        this.particles.forEach((particle) => {
-            if (particle.life <= 0) return;
-            ctx.fillStyle = particle.color;
-            ctx.fillRect(particle.position.x, particle.position.y, particle.size, particle.size);
+    random(min, max) {
+        return min + (max - min) * Math.random();
+    }
+
+    render(view, time) {
+        view.callScaledAndTranslated((ctx) => {
+            this.particles.forEach((particle) => {
+                if (particle.life <= 0) return;
+                ctx.fillStyle = particle.color;
+                ctx.fillRect(particle.position.x, particle.position.y, particle.size, particle.size);
+            });
         });
     }
 }

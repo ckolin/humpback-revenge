@@ -16,10 +16,15 @@ const options = {
 const state = {
     paused: false,
     score: 0,
-    screen: null,
+    view: null,
+    sfx: null,
+    ocean: null,
+    floor: null,
+    whale: null,
+    bubbleEmitter: null,
+    explosionEmitter: null,
     lastUpdate: null,
     direction: {x: 0, y: 0},
-    sfx: null,
     layers: null,
     input: {
         boost: false
@@ -30,17 +35,33 @@ window.addEventListener("load", () => {
     state.view = new View();
     state.sfx = new Sfx();
     state.sfx.init();
-    if (!dbg()) state.sfx.startMusic();
-
     state.ocean = new Ocean();
     state.floor = new Floor();
     state.whale = new Whale();
+
+    state.explosionEmitter = new Emitter(
+        options.colors.slice(2, 4),
+        {x: 0, y: 0.001},
+        500, 1000,
+        1, 4,
+        0, 0.3
+    );
+
+    state.bubbleEmitter = new Emitter(
+        options.colors.slice(11, 13),
+        {x: 0, y: -.001},
+        600, 1400,
+        1, 2,
+        0, 0.2
+    );
 
     // Game objects
     state.layers = {
         background: [
             state.ocean.background,
-            state.floor
+            state.floor,
+            state.bubbleEmitter,
+            state.explosionEmitter
         ],
         enemies: [
             new Boat({x: 40, y: 16}),
@@ -108,7 +129,9 @@ const update = () => {
         state.ocean,
         state.whale,
         state.view,
-        ...state.layers.enemies
+        ...state.layers.enemies,
+        state.bubbleEmitter,
+        state.explosionEmitter
     ].forEach((thing) => thing.update(delta));
 
     // Rendering
@@ -116,7 +139,7 @@ const update = () => {
         ctx.fillStyle = options.colors[4];
         ctx.fillRect(0, 0, options.worldSize.x, options.worldSize.y);
     });
-    [ // TODO: Remove strings
+    [ // TODO: Get rid of strings
         "background",
         "enemies",
         "whale",
