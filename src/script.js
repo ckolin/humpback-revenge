@@ -1,5 +1,5 @@
 const dbg = (obj) => {
-    if (obj) console.log(obj);
+    if (obj !== undefined) console.log(obj);
     return location.hash === "#debug";
 };
 
@@ -57,6 +57,7 @@ const showGame = () => {
 };
 
 const showGameOver = () => {
+    state.view.camera = {x: 0, y: 0};
     state.sfx.stopMusic();
     state.sfx.gameOver();
     state.sceneName = "gameOver";
@@ -65,7 +66,9 @@ const showGameOver = () => {
         update: () => {
             state.view.callScaled((ctx) => ctx.clearRect(0, 0, options.worldSize.x, options.worldSize.y));
             new Label(() => "game over!", {x: 50, y: 40}).render(state.view);
-            new Label(() => `${score} pts`, {x: 60, y: 50}).render(state.view);
+            new Label(() => `${score} points`, {x: 60, y: 50}).render(state.view);
         }
     };
 };
+
+const random = (min, max) => min + (max - min) * Math.random();

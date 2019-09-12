@@ -4,6 +4,7 @@ class Game {
         this.boost = false;
         this.paused = false;
         this.lastUpdate = 0;
+        this.lastWorldGenerationX = -Infinity;
 
         this.ocean = new Ocean();
         this.floor = new Floor();
@@ -30,22 +31,12 @@ class Game {
                 this.bubbleEmitter,
                 this.explosionEmitter
             ],
-            enemies: [
-                new Boat({x: 40, y: 16}),
-                new Boat({x: 100, y: 16}),
-                new Submarine({x: 150, y: 60})
-            ],
+            enemies: [],
             whale: [this.whale],
-            foreground: [
-                new Thing(new Sprite("stone"), {x: 68, y: 89}, {x: 0, y: 1}),
-                new Thing(new Sprite("stone"), {x: 60, y: 94}),
-                new Thing(new Sprite("seaweed", 4, 600, 0), {x: 140, y: 80}),
-                new Thing(new Sprite("seaweed", 4, 600, 2), {x: 160, y: 78}),
-                new Thing(new Sprite("seaweed", 4, 600, 1), {x: 180, y: 76}),
-                this.ocean.foreground
-            ],
+            environment: [],
             overlay: [
-                new Label(() => `${this.score} pts`, {x: options.worldSize.x - 1, y: 1}, true),
+                this.ocean.foreground,
+                new Label(() => `${this.score} points`, {x: options.worldSize.x - 1, y: 1}, true),
                 { // TODO: Extract
                     render: (view) => {
                         view.callScaled((ctx) => {
@@ -88,6 +79,8 @@ class Game {
             return;
         }
 
+        this.generateWorld();
+
         // Update
         [
             state.view,
@@ -107,11 +100,49 @@ class Game {
             "background",
             "enemies",
             "whale",
-            "foreground",
+            "environment",
             "overlay"
         ].forEach((layer) => {
             this.layers[layer] = this.layers[layer].filter((thing) => !thing.toDelete);
             this.layers[layer].forEach((thing) => thing.render(state.view, time));
         });
+    }
+
+    generateWorld() {
+        if (Math.abs(state.view.camera.x - this.lastWorldGenerationX) < options.worldSize.x)
+            return;
+
+        this.score += 10;
+        this.lastWorldGenerationX = state.view.camera.x;
+
+        const distanceFilter = (thing) => Math.abs(thing.position.x - state.view.camera.x) < 2 * options.worldSize.x;
+        this.layers.enemies = this.layers.enemies
+            .filter((enemy) => distanceFilter(enemy.thing));
+        this.layers.environment = this.layers.environment
+            .filter(distanceFilter);
+
+        this.scatter(Math.random() * 4, options.worldSize.y - 10, options.worldSize.y - 5)
+            .forEach((position) => this.layers.environment.push(new Thing(new Sprite("stone"), position, {
+                x: 1,
+                y: Math.random() - 0.5
+            })));
+        this.scatter(Math.random() * 5, options.worldSize.y - 25, options.worldSize.y - 20)
+            .forEach((position) => this.layers.environment.push(new Thing(new Sprite("seaweed", 4, 500, Math.random() * 4), position)));
+        this.scatter(Math.random() * 2, 20, 20)
+            .forEach((position) => this.layers.enemies.push(new Boat(position)));
+        this.scatter(Math.random() * 1, 40, 60)
+            .forEach((position) => this.layers.enemies.push(new Submarine(position)));
+    }
+
+    scatter(count, minY, maxY) {
+        const res = [];
+        for (let i = 0; i < count * 2; i++) {
+            const fac = Math.random() > 0.5 ? 1 : -1;
+            res.push({
+                x: random(state.view.camera.x + options.worldSize.x * fac, state.view.camera.x + 2 * options.worldSize.x * fac),
+                y: random(minY, maxY)
+            });
+        }
+        return res;
     }
 }

@@ -46,10 +46,10 @@ class Emitter {
     }
 
     emitSingle() {
-        const life = this.random(this.minLife, this.maxLife);
-        const angle = this.random(this.minAngle, this.maxAngle);
-        const speed = this.random(this.minSpeed, this.maxSpeed);
-        const size = this.random(this.minSize, this.maxSize);
+        const life = random(this.minLife, this.maxLife);
+        const angle = random(this.minAngle, this.maxAngle);
+        const speed = random(this.minSpeed, this.maxSpeed);
+        const size = random(this.minSize, this.maxSize);
         this.particles.push({
             life,
             position: this.position,
@@ -57,10 +57,6 @@ class Emitter {
             size,
             color: this.colors[Math.floor(Math.random() * this.colors.length)]
         });
-    }
-
-    random(min, max) {
-        return min + (max - min) * Math.random();
     }
 
     render(view, time) {
