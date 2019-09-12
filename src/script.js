@@ -14,29 +14,58 @@ const options = {
 };
 
 const state = {
-    paused: false,
     view: null,
     sfx: null,
-    stage: null,
-    stages: [],
-    lastUpdate: null,
-    direction: {x: 0, y: 0},
-    layers: {},
+    muted: false,
+    scene: null,
+    sceneName: null
 };
 
 window.addEventListener("load", () => {
     state.view = new View();
     state.sfx = new Sfx();
-    state.intro = new Intro();
 
     // Event handlers
     window.addEventListener("resize", () => state.view.resize());
     window.addEventListener("contextmenu", (e) => e.preventDefault());
     state.view.canvas.addEventListener("mousedown", () => {
-        if (state.game) state.game.boost = true;
+        if (state.sceneName === "game") state.scene.boost = true;
     });
     state.view.canvas.addEventListener("mouseup", () => {
-        if (state.game) state.game.boost = false;
-        else state.intro.next();
+        if (state.sceneName === "game") state.scene.boost = false;
+        else if (state.sceneName === "intro") state.scene.next();
+        else if (state.sceneName === "gameOver") showGame();
     });
+
+    showIntro();
+    requestAnimationFrame(loop);
 });
+
+const loop = () => {
+    state.scene.update();
+    window.requestAnimationFrame(loop);
+};
+
+const showIntro = () => {
+    state.sceneName = "intro";
+    state.scene = new Intro();
+};
+
+const showGame = () => {
+    state.sceneName = "game";
+    state.scene = new Game();
+};
+
+const showGameOver = () => {
+    state.sfx.stopMusic();
+    state.sfx.gameOver();
+    state.sceneName = "gameOver";
+    const score = state.scene.score;
+    state.scene = {
+        update: () => {
+            state.view.callScaled((ctx) => ctx.clearRect(0, 0, options.worldSize.x, options.worldSize.y));
+            new Label(() => "game over!", {x: 50, y: 40}).render(state.view);
+            new Label(() => `${score} pts`, {x: 60, y: 50}).render(state.view);
+        }
+    };
+};

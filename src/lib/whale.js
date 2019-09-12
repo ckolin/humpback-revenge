@@ -20,7 +20,7 @@ class Whale {
         if (this.state.isHurt) return;
         this.timeSinceLastHurt = 0;
         this.lives--;
-        if (this.lives <= 0) state.game.gameOver();
+        if (this.lives <= 0) showGameOver();
         else state.sfx.hurt();
     }
 
@@ -29,22 +29,17 @@ class Whale {
         const lastState = this.state == null ? this.getState(delta) : this.state;
         this.state = this.getState(delta);
         if (this.state.isInWater && !lastState.isInWater)
-            state.game.ocean.splash(Vec.subtract(this.thing.position, state.view.camera).x, .5, 12);
+            state.scene.ocean.splash(Vec.subtract(this.thing.position, state.view.camera).x, .5, 12);
         if (this.state.isBoosting && !lastState.isBoosting)
-            state.game.bubbleEmitter.start(5);
+            state.scene.bubbleEmitter.start(5);
         else if (!this.state.isBoosting && lastState.isBoosting)
-            state.game.bubbleEmitter.stop();
-
-        const colliders = this.collide(state.layers.enemies);
-        if (colliders.length > 0) {
-            if (this.state.isBoosting) colliders.forEach((enemy) => enemy.destroy());
-            else this.hurt();
-        }
+            state.scene.bubbleEmitter.stop();
+        state.scene.bubbleEmitter.position = this.thing.position;
 
         // Movement
         if (this.state.shouldMove || !this.state.isInWater) {
             this.thing.sprite = this.whaleSprite;
-            this.thing.forward = Vec.scale(state.direction, 0.01);
+            this.thing.forward = Vec.scale(state.view.direction, 0.01);
             this.velocity = Vec.add(this.velocity, this.getVelocity());
         } else {
             this.thing.sprite = this.whaleFrontSprite;
@@ -52,16 +47,22 @@ class Whale {
         }
         this.velocity = Vec.scale(this.velocity, this.state.isInWater ? 0.75 : 0.999);
         this.thing.position = Vec.add(this.thing.position, Vec.scale(this.velocity, 0.01 * delta));
-        state.game.bubbleEmitter.position = this.thing.position;
+
+        // Collision
+        const colliders = this.collide(state.scene.layers.enemies);
+        if (colliders.length > 0) {
+            if (this.state.isBoosting) colliders.forEach((enemy) => enemy.destroy());
+            else this.hurt();
+        }
     }
 
     getState(delta) {
-        const diff = Vec.length2(state.direction);
+        const diff = Vec.length2(state.view.direction);
         const shouldMove = diff > 100;
         this.timeSinceLastHurt += delta;
         const isHurt = this.timeSinceLastHurt < this.hurtPeriod;
-        const isInWater = this.thing.position.y > state.game.ocean.height(Vec.subtract(this.thing.position, state.view.camera).x);
-        const isOnFloor = this.thing.position.y > state.game.floor.level - 5;
+        const isInWater = this.thing.position.y > state.scene.ocean.height(Vec.subtract(this.thing.position, state.view.camera).x);
+        const isOnFloor = this.thing.position.y > state.scene.floor.level - 5;
         const isBoosting = this.updateBoost(delta);
         return {
             shouldMove,
@@ -82,11 +83,11 @@ class Whale {
     }
 
     updateBoost(delta) {
-        if (this.boost > 0 && state.game.boost) {
+        if (this.boost > 0 && state.scene.boost) {
             this.boost = Math.max(this.boost - delta, 0);
             return true;
         }
-        if (!state.game.boost)
+        if (!state.scene.boost)
             this.boost = Math.min(this.boost + delta * 0.3, this.maxBoost);
         return false;
     }

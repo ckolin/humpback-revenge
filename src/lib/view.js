@@ -5,14 +5,20 @@ class View {
         this.canvasScale = null;
         this.camera = {x: 0, y: 0};
         this.cameraVelocity = {x: 0, y: 0};
+        this.direction = {x: 0, y: 0};
         this.directionRadius = 100;
+
         this.canvas.addEventListener("click", () => this.canvas.requestPointerLock());
-        document.addEventListener("pointerlockchange", () => state.paused = document.pointerLockElement !== this.canvas);
-        this.canvas.addEventListener("mousemove", (e) => {
-            state.direction = Vec.add(state.direction, {x: e.movementX, y: e.movementY});
-            if (Vec.length(state.direction) > this.directionRadius)
-                state.direction = Vec.scale(Vec.normalize(state.direction), this.directionRadius);
+        document.addEventListener("pointerlockchange", () => {
+            if (state.sceneName === "game")
+                state.scene.paused = state.muted = document.pointerLockElement !== this.canvas;
         });
+        this.canvas.addEventListener("mousemove", (e) => {
+            this.direction = Vec.add(this.direction, {x: e.movementX, y: e.movementY});
+            if (Vec.length(this.direction) > this.directionRadius)
+                this.direction = Vec.scale(Vec.normalize(this.direction), this.directionRadius);
+        });
+
         this.resize();
     }
 
@@ -30,7 +36,7 @@ class View {
     };
 
     update(delta) {
-        const diff = state.game.whale.thing.position.x - this.camera.x - options.worldSize.x / 2;
+        const diff = state.scene.whale.thing.position.x - this.camera.x - options.worldSize.x / 2;
         this.cameraVelocity = Vec.add(this.cameraVelocity, {x: diff, y: 0});
         this.cameraVelocity = Vec.scale(this.cameraVelocity, 0.1);
         this.camera = Vec.add(this.camera, Vec.scale(this.cameraVelocity, 0.01 * delta));

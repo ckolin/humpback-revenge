@@ -18,22 +18,19 @@ class Intro {
                 new Label(() => "humpback revenge", {x: 36, y: 48})
             ]
         ];
-        this.stage = dbg() ? this.stages.length : -1;
-        this.next();
-        requestAnimationFrame(() => this.render());
+        this.stage = dbg() ? this.stages.length : 0;
     }
 
     next() {
         this.stage++;
         if (this.stage === this.stages.length - 1) state.sfx.startMusic();
-        if (this.stage >= this.stages.length) state.game = new Game();
+        if (this.stage >= this.stages.length) showGame();
     }
 
-    render() {
+    update() {
         if (this.stage >= this.stages.length)
             return;
         state.view.callScaled((ctx) => ctx.clearRect(0, 0, options.worldSize.x, options.worldSize.y));
         this.stages[this.stage].forEach((item) => item.render(state.view));
-        requestAnimationFrame(() => this.render());
     }
 }

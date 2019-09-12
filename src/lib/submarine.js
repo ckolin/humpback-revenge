@@ -5,9 +5,9 @@ class Submarine {
     }
 
     destroy() {
-        state.game.explosionEmitter.burst(this.thing.position, 100);
+        state.scene.explosionEmitter.burst(this.thing.position, 100);
         state.sfx.explosion();
-        state.game.score += 100;
+        state.scene.score += 100;
         this.toDelete = true;
     }
 
