@@ -20,17 +20,20 @@ class Intro {
         ];
         this.stage = dbg() ? this.stages.length : -1;
         this.next();
+        requestAnimationFrame(() => this.render());
     }
 
     next() {
         this.stage++;
         if (this.stage === this.stages.length - 1) state.sfx.startMusic();
         if (this.stage >= this.stages.length) state.game = new Game();
-        else this.render();
     }
 
     render() {
+        if (this.stage >= this.stages.length)
+            return;
         state.view.callScaled((ctx) => ctx.clearRect(0, 0, options.worldSize.x, options.worldSize.y));
         this.stages[this.stage].forEach((item) => item.render(state.view));
+        requestAnimationFrame(() => this.render());
     }
 }

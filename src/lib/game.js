@@ -1,5 +1,6 @@
 class Game {
     constructor() {
+        this.ended = false;
         this.score = 0;
         this.boost = false;
         this.ocean = new Ocean();
@@ -40,10 +41,10 @@ class Game {
             this.ocean.foreground
         ];
         state.layers.overlay = [
-            new Label(() => `${this.score} PTS`, {x: options.worldSize.x - 1, y: 1}, true),
+            new Label(() => `${this.score} pts`, {x: options.worldSize.x - 1, y: 1}, true),
             { // TODO: Extract
-                render: (screen) => {
-                    screen.callScaled((ctx) => {
+                render: (view) => {
+                    view.callScaled((ctx) => {
                         const size = {x: 36, y: 5};
                         const position = {x: 1, y: options.worldSize.y - size.y};
                         const width = Math.floor((this.whale.boost / this.whale.maxBoost) * size.x);
@@ -56,8 +57,8 @@ class Game {
                     });
                 }
             }, { // TODO: Extract
-                render: (screen) => {
-                    screen.callScaled((ctx) => {
+                render: (view) => {
+                    view.callScaled((ctx) => {
                         const sprite = new Sprite("heart", 1, 0, 0, false);
                         ctx.translate(1, 1);
                         for (let i = 0; i < this.whale.lives; i++) {
@@ -68,6 +69,11 @@ class Game {
                 }
             }
         ];
+        this.pauseLabel = new Label(() => "paused", {x: 55, y: 45});
+        this.gameOverLabels = [
+            new Label(() => "game over!", {x: 50, y: 40}),
+            new Label(() => `${this.score} pts`, {x: 60, y: 50})
+        ];
 
         requestAnimationFrame(() => this.update());
     }
@@ -76,7 +82,15 @@ class Game {
         const time = Date.now();
         const delta = state.lastUpdate ? time - state.lastUpdate : 0;
         state.lastUpdate = time;
-        if (state.paused) {
+
+        state.view.callScaled((ctx) => ctx.clearRect(0, 0, options.worldSize.x, options.worldSize.y));
+
+        if (this.ended) {
+            this.gameOverLabels.forEach((label) => label.render(state.view));
+            requestAnimationFrame(() => this.update());
+            return;
+        } else if (state.paused) {
+            this.pauseLabel.render(state.view);
             requestAnimationFrame(() => this.update());
             return;
         }
@@ -113,6 +127,7 @@ class Game {
     gameOver() {
         state.sfx.stopMusic();
         state.sfx.gameOver();
-        state.paused = true;
+        this.ended = true;
+        this.pauseLabel = new Label(() => "game over!", {x: 40, y: 40});
     }
 }

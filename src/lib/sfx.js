@@ -8,11 +8,11 @@ class Sfx {
     }
 
     explosion() {
-        Sfx.play([1], "triangle", 20, 0.3);
+        Sfx.play([10, 5, 1], "square", 100, 0.1);
     }
 
     hurt() {
-        Sfx.play([1], "square", 20, 0.2);
+        Sfx.play([1], "square", 20, 0.3);
     }
 
     gameOver() {
@@ -23,7 +23,7 @@ class Sfx {
         //const melody = [14, 14, , 14, , 16, , 21, , 19, 19, , 19, , , 19, 19, , 19, , 16, , 16, , 19, 19, , 19, , , 19, , 19, , 21, , 21, , 19, , 19, 19, , 19, , , 19, 19, , 19, , 16, , 16, , 19, 19, , 19, , , 19, , 19, , 24, , 24, , 21];
         const melody = [5, 19, 12, 19, 16, 19, 16, 12, 7, , 11, , 19, , 19, 19, 19, 19, , 12, , 19, , 5, 19, 12, 19, 16, , 12, 11, 12, 13, 16, 15, 16, 17, , 19, , 14, 14, 14, , 14, , 14, , 19, 17, , 15, , 17, 17, , 14, , 15, 16, 19, , 5, 19, 12, 19, 14, 19, 15, 19, 16, 19, 17, 19, , 19, 21, 19, 22, 19, 23, 19, 12, 12, 5, 2, , 19];
         const tempo = 0.24;
-        const loop = () => Sfx.play(melody, "sawtooth", 280, tempo, 0.5);
+        const loop = () => Sfx.play(melody, "square", 230, tempo, 0.3);
         this.musicInterval = setInterval(loop, (melody.length + 1) * tempo * 1000);
         loop();
     }
