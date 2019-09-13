@@ -2,13 +2,13 @@ class Whale {
     constructor() {
         this.whaleSprite = new Sprite("whale", 4, 400);
         this.whaleFrontSprite = new Sprite("whale-front", 2, 800);
-        this.thing = new Thing(this.whaleFrontSprite, {x: 20, y: 60});
+        this.thing = new Thing(this.whaleFrontSprite, {x: 100, y: 50});
 
         this.maxBoost = 2000;
         this.boost = this.maxBoost;
 
         this.lives = 3;
-        this.timeSinceLastHurt = Infinity;
+        this.timeSinceLastHurt = 0;
         this.hurtPeriod = 1500;
         this.blinkSpeed = 100;
         this.velocity = {x: 0, y: 0};
@@ -85,13 +85,13 @@ class Whale {
             return true;
         }
         if (!state.scene.boost)
-            this.boost = Math.min(this.boost + delta * 0.3, this.maxBoost);
+            this.boost = Math.min(this.boost + delta * 0.4, this.maxBoost);
         return false;
     }
 
     collide(enemies) {
         // TODO: Refine hitbox
-        return enemies.filter((enemy) => Vec.distance2(this.thing.position, enemy.thing.position) < 200);
+        return enemies.filter((enemy) => Vec.distance2(this.thing.position, enemy.thing.position) < 180);
     }
 
     render(view, time) {

@@ -23,8 +23,8 @@ class Torpedo {
             this.thing.position = Vec.add(this.thing.position, Vec.scale(this.thing.forward, 0.08 * delta));
         } else if (this.time >= this.startTime) {
             this.started = true;
-            this.thing.position.x = this.fromLeft ? 0 : options.worldSize.x;
-            this.thing.position = Vec.add(this.thing.position, state.view.camera);
+        } else {
+            this.thing.position = Vec.add({x: this.fromLeft ? 0 : options.worldSize.x, y: this.height}, state.view.camera);
         }
     }
 

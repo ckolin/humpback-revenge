@@ -30,14 +30,12 @@ class Game {
                 this.floor,
                 this.bubbleEmitter,
                 this.explosionEmitter,
-                new Label(() => "drag and click", {x: 40, y: 40}),
-                new Label(() => "to move", {x: 40, y: 50}),
+                new Label(() => "controls:", {x: 40, y: 40}),
+                new Label(() => "drag and click", {x: 40, y: 50}),
             ],
             enemies: [],
             whale: [this.whale],
-            environment: [
-                new Thing(new Sprite("seaweed", 4, 600, 0), {x: 50, y: 80}),
-            ],
+            environment: [],
             overlay: [
                 this.ocean.foreground,
                 new Label(() => `${this.score} points`, {x: options.worldSize.x - 1, y: 1}, true),
@@ -121,7 +119,7 @@ class Game {
         if (Math.abs(state.view.camera.x - this.lastWorldGenerationX) < options.worldSize.x)
             return;
 
-        this.score += 10;
+        this.score += 315;
         this.lastWorldGenerationX = state.view.camera.x;
 
         const distanceFilter = (thing) => Math.abs(thing.position.x - state.view.camera.x) < 2 * options.worldSize.x;
@@ -130,18 +128,24 @@ class Game {
         this.layers.environment = this.layers.environment
             .filter(distanceFilter);
 
-        this.scatter(random(2, 4), options.worldSize.y - 10, options.worldSize.y - 5)
-            .forEach((pos) => this.layers.environment.push(new Thing(new Sprite("stone"), pos, {x: 1, y: random(-0.5, 0.5)})));
+        this.scatter(random(1, 5), 3, 5)
+            .forEach((pos) => this.layers.environment.push(new Thing(new Sprite("cloud"), pos)));
+        this.scatter(random(2, 4), options.worldSize.y - 10, options.worldSize.y - 4)
+            .forEach((pos) => this.layers.environment.push(new Thing(new Sprite("grass", 2, 800, random(0, 1)), pos)));
         this.scatter(random(0, 4), options.worldSize.y - 25, options.worldSize.y - 20)
             .forEach((pos) => this.layers.environment.push(new Thing(new Sprite("seaweed", 4, 500, random(0, 4)), pos)));
+        this.scatter(random(2, 4), options.worldSize.y - 10, options.worldSize.y - 5)
+            .forEach((pos) => this.layers.environment.push(new Thing(new Sprite("stone"), pos, {x: 1, y: random(-0.5, 0.5)})));
         this.scatter(random(1, 3), 20, 20)
             .forEach((pos) => this.layers.enemies.push(new Boat(pos)));
+        this.scatter(random(0, 2), 80, 85)
+            .forEach((pos) => this.layers.enemies.push(new Mine(pos)));
         this.scatter(random(0, 1), 40, 60)
             .forEach((pos) => this.layers.enemies.push(new Submarine(pos)));
 
         if (random()) {
-            this.layers.enemies.push(new Torpedo(random(25, 45)));
-            this.layers.enemies.push(new Torpedo(random(50, 75)));
+            this.layers.enemies.push(new Torpedo(random(30, 50)));
+            this.layers.enemies.push(new Torpedo(random(55, 80)));
         }
     }
 
