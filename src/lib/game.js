@@ -29,11 +29,15 @@ class Game {
                 this.ocean.background,
                 this.floor,
                 this.bubbleEmitter,
-                this.explosionEmitter
+                this.explosionEmitter,
+                new Label(() => "drag and click", {x: 40, y: 40}),
+                new Label(() => "to move", {x: 40, y: 50}),
             ],
             enemies: [],
             whale: [this.whale],
-            environment: [],
+            environment: [
+                new Thing(new Sprite("seaweed", 4, 600, 0), {x: 50, y: 80}),
+            ],
             overlay: [
                 this.ocean.foreground,
                 new Label(() => `${this.score} points`, {x: options.worldSize.x - 1, y: 1}, true),
@@ -66,6 +70,11 @@ class Game {
             ]
         };
         this.pauseLabel = new Label(() => "paused", {x: 55, y: 45});
+
+        setTimeout(() => {
+            // Remove tutorial labels
+            this.layers.background = this.layers.background.filter((item) => !item.font);
+        }, 5000);
     }
 
     update() {
@@ -124,13 +133,13 @@ class Game {
         this.scatter(random(2, 4), options.worldSize.y - 10, options.worldSize.y - 5)
             .forEach((pos) => this.layers.environment.push(new Thing(new Sprite("stone"), pos, {x: 1, y: random(-0.5, 0.5)})));
         this.scatter(random(0, 4), options.worldSize.y - 25, options.worldSize.y - 20)
-            .forEach((pos) => this.layers.environment.push(new Thing(new Sprite("seaweed", 4, 500, random(0, 4)), position)));
+            .forEach((pos) => this.layers.environment.push(new Thing(new Sprite("seaweed", 4, 500, random(0, 4)), pos)));
         this.scatter(random(1, 3), 20, 20)
             .forEach((pos) => this.layers.enemies.push(new Boat(pos)));
         this.scatter(random(0, 1), 40, 60)
             .forEach((pos) => this.layers.enemies.push(new Submarine(pos)));
 
-        if (Math.random() < 0.5) {
+        if (random()) {
             this.layers.enemies.push(new Torpedo(random(25, 45)));
             this.layers.enemies.push(new Torpedo(random(50, 75)));
         }
@@ -139,9 +148,9 @@ class Game {
     scatter(count, minY, maxY) {
         const res = [];
         for (let i = 0; i < count * 2; i++) {
-            const fac = Math.random() > 0.5 ? 1 : -1;
+            const fac = random() ? 2 : -1;
             res.push({
-                x: random(state.view.camera.x + options.worldSize.x * fac, state.view.camera.x + 2 * options.worldSize.x * fac),
+                x: random(state.view.camera.x + options.worldSize.x * fac, state.view.camera.x + options.worldSize.x * fac + options.worldSize.x),
                 y: random(minY, maxY)
             });
         }

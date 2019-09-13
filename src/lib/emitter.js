@@ -55,7 +55,7 @@ class Emitter {
             position: this.position,
             velocity: {x: speed * Math.cos(angle), y: -speed * Math.sin(angle)},
             size,
-            color: this.colors[Math.floor(Math.random() * this.colors.length)]
+            color: this.colors[Math.floor(random(0, this.colors.length))]
         });
     }
 
