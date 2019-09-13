@@ -4,11 +4,15 @@ class Submarine {
         this.velocity = {x: 0, y: 0};
     }
 
-    destroy() {
-        state.scene.explosionEmitter.burst(this.thing.position, 100);
-        state.sfx.explosion();
-        state.scene.score += 100;
-        this.toDelete = true;
+    collide() {
+        if (state.scene.whale.state.isBoosting) {
+            state.scene.explosionEmitter.burst(this.thing.position, 60);
+            state.sfx.explosion();
+            state.scene.score += 125;
+            this.toDelete = true;
+        } else {
+            state.scene.whale.hurt();
+        }
     }
 
     update(delta) {

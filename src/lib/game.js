@@ -121,17 +121,19 @@ class Game {
         this.layers.environment = this.layers.environment
             .filter(distanceFilter);
 
-        this.scatter(Math.random() * 4, options.worldSize.y - 10, options.worldSize.y - 5)
-            .forEach((position) => this.layers.environment.push(new Thing(new Sprite("stone"), position, {
-                x: 1,
-                y: Math.random() - 0.5
-            })));
-        this.scatter(Math.random() * 5, options.worldSize.y - 25, options.worldSize.y - 20)
-            .forEach((position) => this.layers.environment.push(new Thing(new Sprite("seaweed", 4, 500, Math.random() * 4), position)));
-        this.scatter(Math.random() * 2, 20, 20)
-            .forEach((position) => this.layers.enemies.push(new Boat(position)));
-        this.scatter(Math.random() * 1, 40, 60)
-            .forEach((position) => this.layers.enemies.push(new Submarine(position)));
+        this.scatter(random(2, 4), options.worldSize.y - 10, options.worldSize.y - 5)
+            .forEach((pos) => this.layers.environment.push(new Thing(new Sprite("stone"), pos, {x: 1, y: random(-0.5, 0.5)})));
+        this.scatter(random(0, 4), options.worldSize.y - 25, options.worldSize.y - 20)
+            .forEach((pos) => this.layers.environment.push(new Thing(new Sprite("seaweed", 4, 500, random(0, 4)), position)));
+        this.scatter(random(1, 3), 20, 20)
+            .forEach((pos) => this.layers.enemies.push(new Boat(pos)));
+        this.scatter(random(0, 1), 40, 60)
+            .forEach((pos) => this.layers.enemies.push(new Submarine(pos)));
+
+        if (Math.random() < 0.5) {
+            this.layers.enemies.push(new Torpedo(random(25, 45)));
+            this.layers.enemies.push(new Torpedo(random(50, 75)));
+        }
     }
 
     scatter(count, minY, maxY) {

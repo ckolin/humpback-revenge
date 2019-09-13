@@ -50,10 +50,7 @@ class Whale {
 
         // Collision
         const colliders = this.collide(state.scene.layers.enemies);
-        if (colliders.length > 0) {
-            if (this.state.isBoosting) colliders.forEach((enemy) => enemy.destroy());
-            else this.hurt();
-        }
+        colliders.forEach((enemy) => enemy.collide());
     }
 
     getState(delta) {
