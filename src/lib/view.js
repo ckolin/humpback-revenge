@@ -3,7 +3,7 @@ class View {
         this.canvas = document.getElementById("canvas");
         this.ctx = this.canvas.getContext("2d");
         this.canvasScale = null;
-        this.camera = {x: 1.5 * options.worldSize.x, y: 0}; // Make camera pan in
+        this.camera = {x: 0, y: 0};
         this.cameraVelocity = {x: 0, y: 0};
         this.direction = {x: 0, y: 0};
         this.directionRadius = 100;

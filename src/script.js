@@ -52,6 +52,7 @@ const showIntro = () => {
 };
 
 const showGame = () => {
+    state.view.camera = {x: 1.5 * options.worldSize.x, y: 0}; // Make camera pan in
     state.sceneName = "game";
     state.scene = new Game();
 };

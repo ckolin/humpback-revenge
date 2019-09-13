@@ -49,7 +49,7 @@ class Whale {
         this.thing.position = Vec.add(this.thing.position, Vec.scale(this.velocity, 0.01 * delta));
 
         // Collision
-        const colliders = this.collide(state.scene.layers.enemies);
+        const colliders = this.collide(state.scene.getEnemies());
         colliders.forEach((enemy) => enemy.collide());
     }
 
