@@ -4,7 +4,7 @@ class Torpedo {
         this.time = 0;
         this.startTime = startTime;
         this.started = false;
-        this.fromLeft = Math.random() < 0.5;
+        this.fromLeft = random();
         this.thing = new Thing(new Sprite("torpedo"), {x: state.view.camera.x, y: height}, {x: this.fromLeft ? 1 : -1, y: 0});
         this.warningSprite = new Sprite("warning");
         this.blinkSpeed = 400;

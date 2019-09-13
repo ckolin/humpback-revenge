@@ -71,4 +71,8 @@ const showGameOver = () => {
     };
 };
 
-const random = (min, max) => min + (max - min) * Math.random();
+const random = (min, max) => {
+    if (min == null || max == null)
+        return Math.random() > 0.5;
+    return min + (max - min) * Math.random();
+};
